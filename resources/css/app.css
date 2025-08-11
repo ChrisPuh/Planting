@@ -23,21 +23,21 @@
     --color-zinc-900: #171717;
     --color-zinc-950: #0a0a0a;
 
-    --color-accent: var(--color-neutral-800);
-    --color-accent-content: var(--color-neutral-800);
-    --color-accent-foreground: var(--color-white);
+    /* Hauptfarbe auf Emerald umgestellt */
+    --color-accent: #10b981; /* emerald-500 */
+    --color-accent-content: #10b981; /* emerald-500 */
+    --color-accent-foreground: #ffffff; /* Weißer Text */
 }
 
 @layer theme {
     .dark {
-        --color-accent: var(--color-white);
-        --color-accent-content: var(--color-white);
-        --color-accent-foreground: var(--color-neutral-800);
+        --color-accent: #34d399; /* emerald-400 für helleren Effekt im Dark Mode */
+        --color-accent-content: #34d399;
+        --color-accent-foreground: #1f2937; /* neutral-800 */
     }
 }
 
 @layer base {
-
     *,
     ::after,
     ::before,
@@ -60,7 +60,3 @@ textarea:focus[data-flux-control],
 select:focus[data-flux-control] {
     @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
 }
-
-/* \[:where(&)\]:size-4 {
-    @apply size-4;
-} */
