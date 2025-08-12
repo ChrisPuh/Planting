@@ -1,17 +1,15 @@
 <?php
 
-namespace App\Domains\Admin\Plants\DTOs;
+namespace App\Domains\Admin\Plants\ValueObjects;
 
-readonly class PlantDetailItemDTO
+readonly class PlantDetailItem
 {
     public function __construct(
         public string $value,
         public bool   $isMissing,
         public string $label,
         public array  $contribution,
-    )
-    {
-    }
+    ) {}
 
     public static function create(
         string $value,
@@ -23,8 +21,7 @@ readonly class PlantDetailItemDTO
         string $contributionType,
         ?int   $plantId = null,
         bool   $required = false
-    ): self
-    {
+    ): self {
         return new self(
             value: $value,
             isMissing: $isMissing,

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Domains\Admin\Plants\DTOs;
+namespace App\Domains\Admin\Plants\ValueObjects;
 
-readonly class PlantMetadataItemDTO
+readonly class PlantMetadataItem
 {
     public function __construct(
         public string  $label,
@@ -10,15 +10,18 @@ readonly class PlantMetadataItemDTO
         public ?string $at,
         public bool    $showBy,
         public string  $colorClass,
-    ) {}
+    )
+    {
+    }
 
     public static function create(
-        string $label,
+        string  $label,
         ?string $by,
         ?string $at,
-        bool $showBy,
-        string $colorClass
-    ): self {
+        bool    $showBy,
+        string  $colorClass
+    ): self
+    {
         return new self($label, $by, $at, $showBy, $colorClass);
     }
 

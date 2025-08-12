@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Domains\Admin\Plants\DTOs;
+namespace App\Domains\Admin\Plants\ViewModels\Show;
 
+use App\Domains\Admin\Plants\ValueObjects\PlantMetadataItem;
 use Illuminate\Support\Carbon;
 
-readonly class PlantMetadataDTO
+readonly class PlantMetadataViewModel
 {
     public function __construct(
         public ?string $requestedBy = null,
@@ -45,9 +46,9 @@ readonly class PlantMetadataDTO
         );
     }
 
-    public function getCreated(): PlantMetadataItemDTO
+    public function getCreated(): PlantMetadataItem
     {
-        return PlantMetadataItemDTO::create(
+        return PlantMetadataItem::create(
             label: 'Erstellt',
             by: $this->createdBy,
             at: $this->formattedCreatedAt(),
@@ -56,13 +57,13 @@ readonly class PlantMetadataDTO
         );
     }
 
-    public function getUpdated(): ?PlantMetadataItemDTO
+    public function getUpdated(): ?PlantMetadataItem
     {
         if (!$this->hasUpdated()) {
             return null;
         }
 
-        return PlantMetadataItemDTO::create(
+        return PlantMetadataItem::create(
             label: 'Zuletzt geändert',
             by: $this->updatedBy,
             at: $this->formattedUpdatedAt(),
@@ -71,13 +72,13 @@ readonly class PlantMetadataDTO
         );
     }
 
-    public function getRequested(): ?PlantMetadataItemDTO
+    public function getRequested(): ?PlantMetadataItem
     {
         if (!$this->wasUserCreateRequest()) {
             return null;
         }
 
-        return PlantMetadataItemDTO::create(
+        return PlantMetadataItem::create(
             label: 'Beantragt',
             by: $this->requestedBy,
             at: $this->formattedRequestedAt(),
@@ -86,13 +87,13 @@ readonly class PlantMetadataDTO
         );
     }
 
-    public function getDeleted(): ?PlantMetadataItemDTO
+    public function getDeleted(): ?PlantMetadataItem
     {
         if (!$this->isDeleted()) {
             return null;
         }
 
-        return PlantMetadataItemDTO::create(
+        return PlantMetadataItem::create(
             label: 'Gelöscht',
             by: $this->deletedBy,
             at: $this->formattedDeletedAt(),
@@ -102,7 +103,7 @@ readonly class PlantMetadataDTO
     }
 
     /**
-     * @return PlantMetadataItemDTO[]
+     * @return PlantMetadataItem[]
      */
     public function getVisibleItems(): array
     {

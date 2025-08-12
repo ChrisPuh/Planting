@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Domains\Admin\Plants\DTOs;
+namespace App\Domains\Admin\Plants\ViewModels\Show;
 
-readonly class PlantDetailsDTO
+use App\Domains\Admin\Plants\ValueObjects\PlantDetailItem;
+
+readonly class PlantDetailsViewModel
 {
     public function __construct(
         public ?string $category = null,
@@ -18,9 +20,9 @@ readonly class PlantDetailsDTO
         return new self($category, $latinName, $description, $plantId);
     }
 
-    public function getCategory(): PlantDetailItemDTO
+    public function getCategory(): PlantDetailItem
     {
-        return PlantDetailItemDTO::create(
+        return PlantDetailItem::create(
             value: $this->category ?? 'N/A',
             isMissing: $this->category === null,
             label: 'Kategorie:',
@@ -32,9 +34,9 @@ readonly class PlantDetailsDTO
         );
     }
 
-    public function getLatinName(): PlantDetailItemDTO
+    public function getLatinName(): PlantDetailItem
     {
-        return PlantDetailItemDTO::create(
+        return PlantDetailItem::create(
             value: $this->latinName ?? 'N/A',
             isMissing: $this->latinName === null,
             label: 'Botanischer Name:',
@@ -46,9 +48,9 @@ readonly class PlantDetailsDTO
         );
     }
 
-    public function getDescription(): PlantDetailItemDTO
+    public function getDescription(): PlantDetailItem
     {
-        return PlantDetailItemDTO::create(
+        return PlantDetailItem::create(
             value: $this->description ?? 'N/A',
             isMissing: $this->description === null,
             label: 'Beschreibung:',
@@ -61,7 +63,7 @@ readonly class PlantDetailsDTO
     }
 
     /**
-     * @return array<string, PlantDetailItemDTO>
+     * @return array<string, PlantDetailItem>
      */
     public function toArray(): array
     {

@@ -2,11 +2,9 @@
     'id',
     'name',
     'type',
-    'isDeleted',
-    'isUpdated',
-    'wasUserCreateRequested',
     'details',
     'metadata',
+    'badges',
     'imageUrl' => null,
 
 ])
@@ -24,16 +22,8 @@
                 <flux:badge color="lime">{{ $type }}</flux:badge>
             </div>
         </div>
-        <div class="flex flex-wrap gap-2 mt-1">
-            @if($metadata->wasUserCreateRequest())
-                <flux:badge color="sky">{{__('Created By User')}}</flux:badge>
-            @endif
+        <x-plants.components.badges :badges="$badges" />
 
-            @if($metadata->isDeleted())
-                <flux:badge variant="solid" color="red">Gelöscht</flux:badge>
-            @endif
-
-        </div>
     </div>
     <flux:separator/>
 
@@ -48,7 +38,7 @@
     <div>
         <div class="flex justify-end gap-2">
             <x-plants.buttons.back :href="route('plants.index')"/>
-            @if(!$isDeleted)
+            @if(!$metadata->isDeleted())
                 <x-plants.buttons.delete :name="$name" :id="$id"/>
             @else
                 <x-plants.buttons.restore :id="$id" :name="$name"/>

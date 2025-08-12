@@ -1,14 +1,14 @@
 <?php
 
-use App\Domains\Admin\Plants\DTOs\PlantViewDTO;
+use App\Domains\Admin\Plants\ViewModels\Show\PlantViewModel;
 use Livewire\Volt\Component;
 
 new class extends Component {
-    protected PlantViewDTO $plant;
+    protected PlantViewModel $plant;
 
     public function mount(int $id): void
     {
-        $this->plant = new PlantViewDTO(
+        $this->plant = new PlantViewModel(
             id: 1,
             name: 'Rote Beete',
             type: 'Gemüse',
@@ -25,10 +25,10 @@ new class extends Component {
             created_at: now()->subDays(5),
             updated_by: auth()->user()?->is_admin ? 'Max Mustermann' : null,
             updated_at: now()->subDays(2),
-            //deleted_by: auth()->user()?->is_admin ? 'Admin User' : null,
-            //deleted_at: now()->subDays(1),
-            deleted_by: null,
-            deleted_at: null,
+            deleted_by: auth()->user()?->is_admin ? 'Admin User' : null,
+            deleted_at: now()->subDays(1),
+        //deleted_by: null,
+        //deleted_at: null,
 
         );
     }
@@ -44,11 +44,9 @@ new class extends Component {
         :id="$this->plant->id"
         :name="$this->plant->name"
         :type="$this->plant->type"
-        :isDeleted="$this->plant->isDeleted()"
-        :isUpdated="$this->plant->isUpdated()"
-        :wasUserCreateRequested="$this->plant->wasUserCreateRequest()"
+        :image-url="$this->plant->image_url"
         :details="$this->plant->getDetails()"
         :metadata="$this->plant->getMetadata()"
-        :image-url="$this->plant->image_url"
+        :badges="$this->plant->getBadges()"
     />
 </x-plants.layout.show>

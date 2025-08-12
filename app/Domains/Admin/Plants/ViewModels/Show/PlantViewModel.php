@@ -1,20 +1,17 @@
 <?php
 
-namespace App\Domains\Admin\Plants\DTOs;
+namespace App\Domains\Admin\Plants\ViewModels\Show;
 
-class PlantViewDTO
+class PlantViewModel
 {
-    private readonly PlantDetailsDTO $details;
-    private readonly PlantMetadataDTO $metadata;
+    private readonly PlantDetailsViewModel $details;
+    private readonly PlantMetadataViewModel $metadata;
+    private readonly PlantBadgesViewModel $badges;
 
     public function __construct(
         public ?int    $id = null,
-
-        /** TODO create ValueObject for name */
         public string  $name,
-        /** TODO create Enum for type */
         public string  $type,
-        /** TODO create ValueObject for image */
         public ?string $image_url = null,
 
         // Details
@@ -33,8 +30,8 @@ class PlantViewDTO
         ?string        $deleted_at = null,
     )
     {
-        $this->details = PlantDetailsDTO::from($category, $latin_name, $description, $this->id);
-        $this->metadata = PlantMetadataDTO::from(
+        $this->details = PlantDetailsViewModel::from($category, $latin_name, $description, $this->id);
+        $this->metadata = PlantMetadataViewModel::from(
             $requested_by,
             $requested_at,
             $created_by,
@@ -45,16 +42,22 @@ class PlantViewDTO
             $deleted_at,
             auth()->user()?->is_admin ?? false
         );
+        $this->badges = PlantBadgesViewModel::from($this->metadata);
     }
 
-    public function getDetails(): PlantDetailsDTO
+    public function getDetails(): PlantDetailsViewModel
     {
         return $this->details;
     }
 
-    public function getMetadata(): PlantMetadataDTO
+    public function getMetadata(): PlantMetadataViewModel
     {
         return $this->metadata;
+    }
+
+    public function getBadges(): PlantBadgesViewModel
+    {
+        return $this->badges;
     }
 
     // Delegated methods for backward compatibility
@@ -72,14 +75,4 @@ class PlantViewDTO
     {
         return $this->metadata->hasUpdated();
     }
-
-    /**
-     * @deprecated Use getMetadata()->formattedCreatedAt() instead
-     */
-    public function formattedCreatedAt(): ?string
-    {
-        return $this->metadata->getCreated()->at;
-    }
-
-    // ... weitere deprecated methods für backward compatibility
 }
