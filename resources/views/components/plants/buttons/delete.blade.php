@@ -3,11 +3,11 @@
     'name',
 ])
 
-<flux:modal.trigger name="delete-profile">
+<flux:modal.trigger name="delete-plant-{{$id}}">
     <flux:button icon="trash" variant="danger">Delete</flux:button>
 </flux:modal.trigger>
 
-<flux:modal name="delete-profile" class="min-w-[22rem]">
+<flux:modal name="delete-plant-{{$id}}" class="min-w-[22rem]">
     <div class="space-y-6">
         <div>
             <flux:heading size="lg">{{__('Pflanze löschen?')}}</flux:heading>

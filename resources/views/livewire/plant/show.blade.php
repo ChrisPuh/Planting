@@ -6,30 +6,29 @@ use Livewire\Volt\Component;
 new class extends Component {
     protected PlantViewDTO $plant;
 
-    public function mount(): void
+    public function mount(int $id): void
     {
         $this->plant = new PlantViewDTO(
             id: 1,
             name: 'Rote Beete',
             type: 'Gemüse',
-            category: 'Wurzelgemüse',
-            latin_name: 'Beta vulgaris',
-            description: 'Rote Beete ist eine zweijährige Pflanze, die als Wurzelgemüse angebaut wird.',
             image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Beets-Bundle.jpg/330px-Beets-Bundle.jpg',
-            isDeleted: true,
-            wasUserCreateRequested: true,
+            category: 'Wurzelgemüse',
+            latin_name: null,
+            description: 'Die Rote Beete ist eine Wurzelgemüseart, die für ihre leuchtend rote Farbe bekannt ist. Sie wird oft in Salaten, Suppen und als Beilage verwendet. Reich an Vitaminen und Mineralien, ist sie auch für ihre gesundheitsfördernden Eigenschaften bekannt.',
 
+            //requested_by: null,
+            //requested_at: null,
             requested_by: auth()->user()?->is_admin ? 'Max Mustermann' : null,
             requested_at: now()->subDays(10),
             created_by: auth()->user()?->is_admin ? 'Admin User' : null,
             created_at: now()->subDays(5),
-
             updated_by: auth()->user()?->is_admin ? 'Max Mustermann' : null,
             updated_at: now()->subDays(2),
-            //deleted_by:null,
-            //deleted_at:null
-            deleted_by: auth()->user()?->is_admin ? 'Admin User' : null,
-            deleted_at: now()->subDays(1),
+            //deleted_by: auth()->user()?->is_admin ? 'Admin User' : null,
+            //deleted_at: now()->subDays(1),
+            deleted_by: null,
+            deleted_at: null,
 
         );
     }
@@ -38,27 +37,25 @@ new class extends Component {
 <x-plants.layout.show
     :id="$this->plant->id"
     :name="$this->plant->name"
-    :isDeleted="$this->plant->isDeleted"
-    :wasUserCreateRequested="$this->plant->wasUserCreateRequested"
+    :isDeleted="$this->plant->isDeleted()"
+    :wasUserCreateRequested="$this->plant->wasUserCreateRequest()"
 >
     <x-plants.cards.plant-show-card
         :id="$this->plant->id"
         :name="$this->plant->name"
         :type="$this->plant->type"
-        :category="$this->plant->category"
-        :latin-name="$this->plant->latin_name"
-        :description="$this->plant->description"
+        :isDeleted="$this->plant->isDeleted()"
+        :isUpdated="$this->plant->isUpdated()"
+        :wasUserCreateRequested="$this->plant->wasUserCreateRequest()"
+        :details="$this->plant->getDetails()"
         :image-url="$this->plant->image_url"
-        :createdAt="$this->plant->created_at"
+        :createdAt="$this->plant->formattedCreatedAt()"
         :createdBy="$this->plant->created_by"
-        :updatedBy="$this->plant->updated_by"
+        :updatedBy="$this->plant->formattedUpdatedAt()"
         :updatedAt="$this->plant->updated_at"
         :requestedBy="$this->plant->requested_by"
-        :requestedAt="$this->plant->requested_at"
+        :requestedAt="$this->plant->formattedRequestedAt()"
         :deletedBy="$this->plant->deleted_by"
-        :deletedAt="$this->plant->deleted_at"
-        :isDeleted="$this->plant->isDeleted"
-
-
+        :deletedAt="$this->plant->formattedDeletedAt()"
     />
 </x-plants.layout.show>

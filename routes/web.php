@@ -19,14 +19,13 @@ Route::middleware('auth')->group(function () {
     Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
 });
 
-
 Route::middleware('auth')->group(function () {
     Route::redirect('plants', 'plants/dashboard');
 
     Volt::route('plants/dashboard', 'plant.dashboard')->name('plants.dashboard');
     Volt::route('plants/index', 'plant.index')->name('plants.index');
     Volt::route('plants/create', 'plant.create')->name('plants.create');
-    Volt::route('plants/show', 'plant.show')->name('plants.show');
+    Volt::route('plants/show/{id}', 'plant.show')->name('plants.show');
     Volt::route('plants/edit', 'plant.edit')->name('plants.edit');
 });
 

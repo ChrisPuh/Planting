@@ -3,9 +3,9 @@
     'name',
     'type',
     'isDeleted',
-    'category' => null,
-    'latinName' => null,
-    'description' => null,
+    'isUpdated',
+    'wasUserCreateRequested',
+    'details',
     'imageUrl' => null,
     'requestedAt'=> null,
     'requestedBy'=> null,
@@ -32,7 +32,7 @@
         </div>
         <div class="flex flex-wrap gap-2 mt-1">
             @if($requestedAt)
-                <flux:badge color="sky">{{__('UserRequest')}}</flux:badge>
+                <flux:badge color="sky">{{__('Created By User')}}</flux:badge>
             @endif
 
             @if($deletedAt)
@@ -43,48 +43,24 @@
     </div>
     <flux:separator/>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-        @if($category)
-            <div>
-                <span class="font-semibold">Kategorie:</span>
-                <span>{{ $category }}</span>
-            </div>
-        @endif
-
-        @if($latinName)
-            <div>
-                <span class="font-semibold">Botanischer Name:</span>
-                <span class="italic">{{ $latinName }}</span>
-            </div>
-        @endif
-    </div>
-
-    @if($description)
-        <flux:separator/>
-        <p class="text-zinc-700 dark:text-zinc-300">
-            {{ $description }}
-        </p>
-    @endif
+    @include('partials.plants.show.details')
 
     <flux:separator/>
 
 
     <div class="flex items-center justify-between">
         <div>
-            @if($createdBy || $createdAt || $updatedBy || $updatedAt || $requestedBy || $requestedAt || $deletedAt || $deletedBy)
-
-                <div class="text-xs text-zinc-500 dark:text-zinc-400 space-y-1">
-                    @if($createdBy || $createdAt)
-                        <div>
-                            Erstellt
-                            @if($createdBy)
-                                von <span class="font-medium">{{ $createdBy }}</span>
-                            @endif
-                            @if($createdAt)
-                                am {{ \Carbon\Carbon::parse($createdAt)->format('d.m.Y H:i') }}
-                            @endif
-                        </div>
+            <div class="text-xs text-zinc-500 dark:text-zinc-400 space-y-1">
+                <div>
+                    Erstellt
+                    @if($createdBy)
+                        von <span class="font-medium">{{ $createdBy }}</span>
                     @endif
+                    @if($createdAt)
+                        am {{ $createdAt }}
+                    @endif
+                </div>
+                @if($isUpdated || $wasUserCreateRequested || $isDeleted)
 
                     @if($updatedBy || $updatedAt)
                         <div>
@@ -93,18 +69,18 @@
                                 von <span class="font-medium">{{ $updatedBy }}</span>
                             @endif
                             @if($updatedAt)
-                                am {{ \Carbon\Carbon::parse($updatedAt)->format('d.m.Y H:i') }}
+                                am {{ $updatedAt }}
                             @endif
                         </div>
                     @endif
-                    @if($requestedBy || $requestedAt)
+                    @if($wasUserCreateRequested)
                         <div class="text-xs text-zinc-500 dark:text-zinc-400">
                             Beantragt
                             @if(auth()->user()?->is_admin && $requestedBy)
                                 von <span class="font-medium">{{ $requestedBy }}</span>
                             @endif
                             @if($requestedAt)
-                                am {{ \Carbon\Carbon::parse($requestedAt)->format('d.m.Y H:i') }}
+                                am {{ $requestedAt }}
                             @endif
                         </div>
                     @endif
@@ -115,11 +91,11 @@
                             @if(auth()->user()?->is_admin && $deletedBy)
                                 von <span class="font-medium">{{ $deletedBy }}</span>
                             @endif
-                            am {{ \Carbon\Carbon::parse($deletedAt)->format('d.m.Y H:i') }}
+                            am {{ $deletedAt }}
                         </div>
                     @endif
-                </div>
-            @endif
+                @endif
+            </div>
         </div>
         <div>
             <div class="flex justify-end gap-2">
