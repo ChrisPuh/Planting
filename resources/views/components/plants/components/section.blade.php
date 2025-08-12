@@ -58,6 +58,7 @@
     @else
         {{-- Header/Actions ohne Title sind immer sichtbar --}}
         @php ${$viewModel->getVariableName()} = $viewModel; @endphp
+        {{-- include the partial 'partials/plants/show/*' --}}
         @include($viewModel->getPartial())
     @endif
 
