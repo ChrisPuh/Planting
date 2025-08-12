@@ -3,7 +3,6 @@
         @if($key === 'description')
             <!-- Description gets full width and centered -->
             <div class="col-span-2 space-y-4">
-                <flux:separator/>
                 <div class="w-full flex items-baseline sm:space-y-0 md:space-x-4 flex-col lg:flex-row">
                     <div class="font-semibold text-emerald-600 text-center">{{ $detail->label }}</div>
                     @if($detail->isMissing)
@@ -23,7 +22,8 @@
                     @if($detail->isMissing)
                         <x-plants.buttons.contribute :contribute="$detail->contribution"/>
                     @else
-                        <span class="bg-zinc-50 dark:bg-zinc-700/50 px-3 py-1.5 rounded-md text-zinc-700 dark:text-zinc-300 inline-block w-full text-center">{{ $detail->value }}</span>
+                        <span
+                            class="bg-zinc-50 dark:bg-zinc-700/50 px-3 py-1.5 rounded-md text-zinc-700 dark:text-zinc-300 inline-block w-full text-center">{{ $detail->value }}</span>
                     @endif
                 </div>
             </div>

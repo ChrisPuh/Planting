@@ -3,22 +3,28 @@
 namespace App\Domains\Admin\Plants\ViewModels\Show;
 
 use App\Domains\Admin\Plants\ValueObjects\PlantMetadataItem;
+use App\Domains\Admin\Plants\ViewModels\Show\Concerns\HasSectionInfo;
 use Illuminate\Support\Carbon;
 
-readonly class PlantMetadataViewModel
+class PlantMetadataViewModel
 {
+    use HasSectionInfo;
+
     public function __construct(
-        public ?string $requestedBy = null,
-        public ?string $requestedAt = null,
-        public ?string $createdBy = null,
-        public ?string $createdAt = null,
-        public ?string $updatedBy = null,
-        public ?string $updatedAt = null,
-        public ?string $deletedBy = null,
-        public ?string $deletedAt = null,
-        private bool   $isAdmin = false,
+        public readonly ?string $requestedBy = null,
+        public readonly ?string $requestedAt = null,
+        public readonly ?string $createdBy = null,
+        public readonly ?string $createdAt = null,
+        public readonly ?string $updatedBy = null,
+        public readonly ?string $updatedAt = null,
+        public readonly ?string $deletedBy = null,
+        public readonly ?string $deletedAt = null,
+        private readonly bool   $isAdmin = false,
     )
     {
+        $this->sectionTitle = __('Metadaten');
+        $this->sectionPartial = 'partials.plants.show.metadata';
+        $this->variableName = 'metadata';
     }
 
     public static function from(

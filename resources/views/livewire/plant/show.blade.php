@@ -41,12 +41,9 @@ new class extends Component {
     :wasUserCreateRequested="$this->plant->wasUserCreateRequest()"
 >
     <x-plants.cards.plant-show-card
-        :id="$this->plant->id"
-        :name="$this->plant->name"
-        :type="$this->plant->type"
-        :image-url="$this->plant->image_url"
+        :header="$this->plant->getHeader()"
         :details="$this->plant->getDetails()"
         :metadata="$this->plant->getMetadata()"
-        :badges="$this->plant->getBadges()"
+        :actions="$this->plant->getActions()"
     />
 </x-plants.layout.show>

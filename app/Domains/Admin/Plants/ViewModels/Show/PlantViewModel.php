@@ -1,11 +1,15 @@
 <?php
 
+// App\Domains\Admin\Plants\ViewModels\Show\PlantViewModel.php - Updated
 namespace App\Domains\Admin\Plants\ViewModels\Show;
 
 class PlantViewModel
 {
+    private readonly PlantHeaderViewModel $header;
     private readonly PlantDetailsViewModel $details;
     private readonly PlantMetadataViewModel $metadata;
+    private readonly PlantActionsViewModel $actions;
+
     private readonly PlantBadgesViewModel $badges;
 
     public function __construct(
@@ -30,7 +34,6 @@ class PlantViewModel
         ?string        $deleted_at = null,
     )
     {
-        $this->details = PlantDetailsViewModel::from($category, $latin_name, $description, $this->id);
         $this->metadata = PlantMetadataViewModel::from(
             $requested_by,
             $requested_at,
@@ -42,7 +45,20 @@ class PlantViewModel
             $deleted_at,
             auth()->user()?->is_admin ?? false
         );
+
         $this->badges = PlantBadgesViewModel::from($this->metadata);
+
+        // Header bekommt die Badges mit
+        $this->header = PlantHeaderViewModel::from($this->name, $this->type, $this->image_url, $this->badges);
+
+        $this->details = PlantDetailsViewModel::from($category, $latin_name, $description, $this->id);
+
+        $this->actions = PlantActionsViewModel::from($this->id, $this->name, $this->metadata->isDeleted());
+    }
+
+    public function getHeader(): PlantHeaderViewModel
+    {
+        return $this->header;
     }
 
     public function getDetails(): PlantDetailsViewModel
@@ -55,12 +71,17 @@ class PlantViewModel
         return $this->metadata;
     }
 
+    public function getActions(): PlantActionsViewModel
+    {
+        return $this->actions;
+    }
+
     public function getBadges(): PlantBadgesViewModel
     {
         return $this->badges;
     }
 
-    // Delegated methods for backward compatibility
+    // Convenience methods
     public function wasUserCreateRequest(): bool
     {
         return $this->metadata->wasUserCreateRequest();
@@ -75,4 +96,5 @@ class PlantViewModel
     {
         return $this->metadata->hasUpdated();
     }
+
 }

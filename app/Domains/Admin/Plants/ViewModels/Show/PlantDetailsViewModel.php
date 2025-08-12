@@ -3,16 +3,22 @@
 namespace App\Domains\Admin\Plants\ViewModels\Show;
 
 use App\Domains\Admin\Plants\ValueObjects\PlantDetailItem;
+use App\Domains\Admin\Plants\ViewModels\Show\Concerns\HasSectionInfo;
 
-readonly class PlantDetailsViewModel
+class PlantDetailsViewModel
 {
+    use HasSectionInfo;
+
     public function __construct(
-        public ?string $category = null,
-        public ?string $latinName = null,
-        public ?string $description = null,
-        private ?int   $plantId = null,
+        public readonly ?string $category = null,
+        public readonly ?string $latinName = null,
+        public readonly ?string $description = null,
+        private readonly ?int   $plantId = null,
     )
     {
+        $this->sectionTitle = 'Details';
+        $this->sectionPartial = 'partials.plants.show.details';
+        $this->variableName = 'details';
     }
 
     public static function from(?string $category, ?string $latinName, ?string $description, ?int $plantId = null): self
