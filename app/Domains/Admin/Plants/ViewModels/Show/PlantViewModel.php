@@ -13,7 +13,7 @@ class PlantViewModel
     private readonly PlantBadgesViewModel $badges;
 
     public function __construct(
-        public ?int    $id = null,
+        public ?string $uuid = null,    // ← NEU für echte Daten
         public string  $name,
         public string  $type,
         public ?string $image_url = null,
@@ -41,13 +41,17 @@ class PlantViewModel
             $requested_by, $requested_at, $created_by, $created_at,
             $updated_by, $updated_at, $deleted_by, $deleted_at,
             auth()->user()?->is_admin ?? false,
-            $timelineEvents // Timeline Events übergeben
+            $timelineEvents
         );
 
         $this->badges = PlantBadgesViewModel::from($this->metadata);
         $this->header = PlantHeaderViewModel::from($this->name, $this->type, $this->image_url, $this->badges);
-        $this->details = PlantDetailsViewModel::from($category, $latin_name, $description, $this->id);
-        $this->actions = PlantActionsViewModel::from($this->id, $this->name, $this->metadata->isDeleted());
+        $this->details = PlantDetailsViewModel::from($category, $latin_name, $description, $this->uuid);
+        $this->actions = PlantActionsViewModel::from(
+            $this->uuid, // Fallback für Tests
+            $this->name,
+            $this->metadata->isDeleted()
+        );
     }
 
     public function getHeader(): PlantHeaderViewModel

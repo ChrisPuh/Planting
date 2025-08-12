@@ -7,9 +7,9 @@ class PlantActionsViewModel
     use Concerns\HasSectionInfo;
 
     public function __construct(
-        public readonly int    $id,
+        public string        $uuid,
         public readonly string $name,
-        public readonly bool   $isDeleted,
+        public readonly bool $isDeleted,
     )
     {
         $this->sectionTitle = 'Actions';
@@ -17,9 +17,9 @@ class PlantActionsViewModel
         $this->variableName = 'actions';
     }
 
-    public static function from(int $id, string $name, bool $isDeleted): self
+    public static function from(string $uuid, string $name, bool $isDeleted): self  // ← Updated
     {
-        return new self($id, $name, $isDeleted);
+        return new self($uuid, $name, $isDeleted);
     }
 
     public function getBackRoute(): string
@@ -33,14 +33,14 @@ class PlantActionsViewModel
             return [
                 'type' => 'restore',
                 'component' => 'x-plants.buttons.restore',
-                'props' => ['id' => $this->id, 'name' => $this->name]
+                'props' => ['uuid' => $this->uuid, 'name' => $this->name]  // ← Changed
             ];
         }
 
         return [
             'type' => 'delete',
             'component' => 'x-plants.buttons.delete',
-            'props' => ['id' => $this->id, 'name' => $this->name]
+            'props' => ['uuid' => $this->uuid, 'name' => $this->name]  // ← Changed
         ];
     }
 

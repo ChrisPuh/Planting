@@ -1,21 +1,27 @@
 <?php
 
+// resources/views/livewire/plant/show.blade.php - Mit protected Property
 use App\Domains\Admin\Plants\Services\PlantService;
 use App\Domains\Admin\Plants\ViewModels\Show\PlantViewModel;
-use App\Domains\Admin\Plants\ValueObjects\TimelineEvent;
 use Livewire\Volt\Component;
 
 new class extends Component {
     protected PlantViewModel $plant;
 
-    public function mount(int $id, PlantService $plantService): void
+    public function mount(string $uuid, PlantService $plantService): void
     {
-        $this->plant = $plantService->getPlantForShow($id);
+        $this->plant = $plantService->getPlantForShow($uuid);
+    }
+
+    // Getter für Template Access
+    public function getPlantProperty(): PlantViewModel
+    {
+        return $this->plant;
     }
 }; ?>
 
 <x-plants.layout.show
-    :id="$this->plant->id"
+    :uuid="$this->plant->uuid"
     :name="$this->plant->name"
     :isDeleted="$this->plant->isDeleted()"
     :wasUserCreateRequested="$this->plant->wasUserCreateRequest()"
