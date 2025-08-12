@@ -32,27 +32,21 @@ class PlantViewModel
         ?string        $updated_at = null,
         ?string        $deleted_by = null,
         ?string        $deleted_at = null,
+
+        // NEW: Timeline Events
+        array          $timelineEvents = [],
     )
     {
         $this->metadata = PlantMetadataViewModel::from(
-            $requested_by,
-            $requested_at,
-            $created_by,
-            $created_at,
-            $updated_by,
-            $updated_at,
-            $deleted_by,
-            $deleted_at,
-            auth()->user()?->is_admin ?? false
+            $requested_by, $requested_at, $created_by, $created_at,
+            $updated_by, $updated_at, $deleted_by, $deleted_at,
+            auth()->user()?->is_admin ?? false,
+            $timelineEvents // Timeline Events übergeben
         );
 
         $this->badges = PlantBadgesViewModel::from($this->metadata);
-
-        // Header bekommt die Badges mit
         $this->header = PlantHeaderViewModel::from($this->name, $this->type, $this->image_url, $this->badges);
-
         $this->details = PlantDetailsViewModel::from($category, $latin_name, $description, $this->id);
-
         $this->actions = PlantActionsViewModel::from($this->id, $this->name, $this->metadata->isDeleted());
     }
 

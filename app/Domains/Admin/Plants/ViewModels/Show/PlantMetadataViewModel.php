@@ -3,12 +3,15 @@
 namespace App\Domains\Admin\Plants\ViewModels\Show;
 
 use App\Domains\Admin\Plants\ValueObjects\PlantMetadataItem;
+use App\Domains\Admin\Plants\ValueObjects\TimelineEvent;
 use App\Domains\Admin\Plants\ViewModels\Show\Concerns\HasSectionInfo;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Carbon;
 
 class PlantMetadataViewModel
 {
     use HasSectionInfo;
+
 
     public function __construct(
         public readonly ?string $requestedBy = null,
@@ -20,11 +23,16 @@ class PlantMetadataViewModel
         public readonly ?string $deletedBy = null,
         public readonly ?string $deletedAt = null,
         private readonly bool   $isAdmin = false,
+        private readonly array  $timelineEvents = [], // Externe Timeline-Events
+
+
     )
     {
         $this->sectionTitle = __('Metadaten');
         $this->sectionPartial = 'partials.plants.show.metadata';
         $this->variableName = 'metadata';
+
+
     }
 
     public static function from(
@@ -36,7 +44,8 @@ class PlantMetadataViewModel
         ?string $updatedAt,
         ?string $deletedBy,
         ?string $deletedAt,
-        bool    $isAdmin = false
+        bool    $isAdmin = false,
+        array   $timelineEvents = []
     ): self
     {
         return new self(
@@ -48,8 +57,19 @@ class PlantMetadataViewModel
             $updatedAt,
             $deletedBy,
             $deletedAt,
-            $isAdmin
+            $isAdmin,
+            $timelineEvents
         );
+    }
+
+    /**
+     * @return Collection<TimelineEvent>
+     * TODO extract to service or repository
+     */
+    public function getTimelineEvents(): Collection
+    {
+        // Einfach die übergebenen Events zurückgeben
+        return collect($this->timelineEvents);
     }
 
     public function getCreated(): PlantMetadataItem
@@ -143,6 +163,7 @@ class PlantMetadataViewModel
 
     private function formattedCreatedAt(): ?string
     {
+        // TODO extract to service or value object
         return $this->createdAt
             ? Carbon::parse($this->createdAt)->format('d.m.Y H:i')
             : null;
@@ -150,6 +171,7 @@ class PlantMetadataViewModel
 
     private function formattedUpdatedAt(): ?string
     {
+        // TODO extract to service or value object
         return $this->updatedAt
             ? Carbon::parse($this->updatedAt)->format('d.m.Y H:i')
             : null;
@@ -157,6 +179,7 @@ class PlantMetadataViewModel
 
     private function formattedRequestedAt(): ?string
     {
+        // TODO extract to service or value object
         return $this->requestedAt
             ? Carbon::parse($this->requestedAt)->format('d.m.Y H:i')
             : null;
@@ -164,6 +187,7 @@ class PlantMetadataViewModel
 
     private function formattedDeletedAt(): ?string
     {
+        // TODO extract to service or value object
         return $this->deletedAt
             ? Carbon::parse($this->deletedAt)->format('d.m.Y H:i')
             : null;
