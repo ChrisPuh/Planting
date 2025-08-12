@@ -48,14 +48,7 @@ new class extends Component {
         :isUpdated="$this->plant->isUpdated()"
         :wasUserCreateRequested="$this->plant->wasUserCreateRequest()"
         :details="$this->plant->getDetails()"
+        :metadata="$this->plant->getMetadata()"
         :image-url="$this->plant->image_url"
-        :createdAt="$this->plant->formattedCreatedAt()"
-        :createdBy="$this->plant->created_by"
-        :updatedBy="$this->plant->formattedUpdatedAt()"
-        :updatedAt="$this->plant->updated_at"
-        :requestedBy="$this->plant->requested_by"
-        :requestedAt="$this->plant->formattedRequestedAt()"
-        :deletedBy="$this->plant->deleted_by"
-        :deletedAt="$this->plant->formattedDeletedAt()"
     />
 </x-plants.layout.show>
