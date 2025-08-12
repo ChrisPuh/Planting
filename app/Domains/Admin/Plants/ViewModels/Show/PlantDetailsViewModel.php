@@ -79,4 +79,14 @@ class PlantDetailsViewModel
             'description' => $this->getDescription(),
         ];
     }
+
+    public function isExpandable(): bool
+    {
+        return true; // Details können eingeklappt werden
+    }
+
+    public function getDefaultExpanded(): bool
+    {
+        return true; // This view model does not support expansion
+    }
 }

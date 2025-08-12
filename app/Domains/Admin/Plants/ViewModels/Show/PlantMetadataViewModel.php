@@ -192,4 +192,13 @@ class PlantMetadataViewModel
             ? Carbon::parse($this->deletedAt)->format('d.m.Y H:i')
             : null;
     }
+
+    public function isExpandable(): bool
+    {
+        return true; // Metadaten können eingeklappt werden
+    }
+    public function getDefaultExpanded(): bool
+    {
+        return false; // Standardmäßig nicht erweitert
+    }
 }

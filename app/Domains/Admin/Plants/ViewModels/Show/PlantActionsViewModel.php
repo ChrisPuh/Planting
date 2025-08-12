@@ -43,4 +43,11 @@ class PlantActionsViewModel
             'props' => ['id' => $this->id, 'name' => $this->name]
         ];
     }
+
+    public function isExpandable(): bool
+    {
+        return false; // This view model does not support expansion
+    }
+
+
 }

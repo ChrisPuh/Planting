@@ -54,4 +54,9 @@ class PlantHeaderViewModel
     {
         return $this->badges && $this->badges->hasBadges();
     }
+
+    public function isExpandable(): bool
+    {
+        return false; // Header ist nie expandable
+    }
 }
