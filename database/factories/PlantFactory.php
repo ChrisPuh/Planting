@@ -1,16 +1,18 @@
 <?php
 
+// database/factories/PlantFactory.php
 namespace Database\Factories;
 
 use App\Models\Plant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
-/**
- * @extends Factory<Plant>
- */
+// ← MISSING IMPORT
+
 class PlantFactory extends Factory
 {
+    protected $model = Plant::class;
+
     private static array $vegetables = [
         ['name' => 'Rote Beete', 'category' => 'Wurzelgemüse', 'latin' => 'Beta vulgaris'],
         ['name' => 'Karotten', 'category' => 'Wurzelgemüse', 'latin' => 'Daucus carota'],
@@ -86,7 +88,7 @@ class PlantFactory extends Factory
                 'type' => 'gemuese',
                 'category' => $vegetable['category'],
                 'latin_name' => $this->faker->boolean(70) ? $vegetable['latin'] : null,
-                'description' => $this->generateDescription($vegetable['name'], 'Gemüse'),
+                'description' => $this->generateDescription($vegetable['name'], 'Gemüse'), // ← FIX: Verwende $vegetable['name']
             ];
         });
     }
@@ -100,7 +102,7 @@ class PlantFactory extends Factory
                 'type' => 'kraeuter',
                 'category' => $herb['category'],
                 'latin_name' => $this->faker->boolean(80) ? $herb['latin'] : null,
-                'description' => $this->generateDescription($herb['name'], 'Kraut'),
+                'description' => $this->generateDescription($herb['name'], 'Kraut'), // ← FIX: Verwende $herb['name']
             ];
         });
     }
@@ -114,7 +116,7 @@ class PlantFactory extends Factory
                 'type' => 'blume',
                 'category' => $flower['category'],
                 'latin_name' => $this->faker->boolean(60) ? $flower['latin'] : null,
-                'description' => $this->generateDescription($flower['name'], 'Blume'),
+                'description' => $this->generateDescription($flower['name'], 'Blume'), // ← FIX: Verwende $flower['name']
             ];
         });
     }
@@ -152,10 +154,21 @@ class PlantFactory extends Factory
     public function withCompleteData(): static
     {
         return $this->state(function (array $attributes) {
+            // Verwende den bereits gesetzten Namen für die Beschreibung
+            $plantName = $attributes['name'] ?? 'Unbekannte Pflanze';
+            $plantType = $attributes['type'] ?? 'gemuese';
+
+            $typeDisplay = match ($plantType) {
+                'gemuese' => 'Gemüse',
+                'kraeuter' => 'Kraut',
+                'blume' => 'Blume',
+                default => 'Pflanze'
+            };
+
             return [
                 'latin_name' => $attributes['latin_name'] ?? 'Plantus exampleus',
-                'description' => $attributes['description'] ?? $this->generateDescription($attributes['name'], 'Pflanze'),
-                'image_url' => $this->faker->imageUrl(400, 300, 'plants', true),
+                'description' => $this->generateDescription($plantName, $typeDisplay), // ← FIX: Verwende richtigen Namen
+                'image_url' => $this->faker->imageUrl(400, 300, 'plants', true, $plantName), // ← FIX: Auch hier
             ];
         });
     }
