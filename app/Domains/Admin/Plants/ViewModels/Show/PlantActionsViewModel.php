@@ -7,11 +7,10 @@ class PlantActionsViewModel
     use Concerns\HasSectionInfo;
 
     public function __construct(
-        public string        $uuid,
+        public string $uuid,
         public readonly string $name,
         public readonly bool $isDeleted,
-    )
-    {
+    ) {
         $this->sectionTitle = 'Actions';
         $this->sectionPartial = 'partials.plants.show.actions';
         $this->variableName = 'actions';
@@ -33,14 +32,14 @@ class PlantActionsViewModel
             return [
                 'type' => 'restore',
                 'component' => 'x-plants.buttons.restore',
-                'props' => ['uuid' => $this->uuid, 'name' => $this->name]  // ← Changed
+                'props' => ['uuid' => $this->uuid, 'name' => $this->name],  // ← Changed
             ];
         }
 
         return [
             'type' => 'delete',
             'component' => 'x-plants.buttons.delete',
-            'props' => ['uuid' => $this->uuid, 'name' => $this->name]  // ← Changed
+            'props' => ['uuid' => $this->uuid, 'name' => $this->name],  // ← Changed
         ];
     }
 
@@ -48,6 +47,4 @@ class PlantActionsViewModel
     {
         return false; // This view model does not support expansion
     }
-
-
 }

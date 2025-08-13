@@ -1,10 +1,11 @@
 <?php
 
 // database/factories/PlantTimelineProjectionFactory.php
+
 namespace Database\Factories;
 
-use App\Models\PlantTimelineProjection;
 use App\Models\Plant;
+use App\Models\PlantTimelineProjection;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PlantTimelineProjectionFactory extends Factory
@@ -15,7 +16,7 @@ class PlantTimelineProjectionFactory extends Factory
         'GartenProfi_Max', 'BlumenLiebhaberin_Anna', 'Kräuter_Klaus', 'Gemüse_Greta',
         'PflanzenfanTom', 'BioBauer_Ben', 'HobbygärtnerLisa', 'Botaniker_Bob',
         'GrünerDaumen_Gabi', 'Pflanzenflüsterer_Paul', 'Admin_User', 'Community_Helper',
-        'Garten_Experte', 'Pflanzendoktor_Petra', 'Seedling_Sam'
+        'Garten_Experte', 'Pflanzendoktor_Petra', 'Seedling_Sam',
     ];
 
     public function definition(): array
@@ -37,10 +38,10 @@ class PlantTimelineProjectionFactory extends Factory
         return $this->state(function (array $attributes) {
             return [
                 'event_type' => 'requested',
-                'performed_by' => $this->faker->randomElement(array_filter(self::$usernames, fn($u) => $u !== 'Admin_User')),
+                'performed_by' => $this->faker->randomElement(array_filter(self::$usernames, fn ($u) => $u !== 'Admin_User')),
                 'event_details' => [
                     'plant_name' => $this->faker->randomElement(['Neue Tomatensorte', 'Exotische Blume', 'Seltenes Kraut']),
-                    'reason' => 'Community-Anfrage für neue Pflanze'
+                    'reason' => 'Community-Anfrage für neue Pflanze',
                 ],
                 'display_text' => 'hat eine neue Pflanze beantragt',
             ];
@@ -57,7 +58,7 @@ class PlantTimelineProjectionFactory extends Factory
                     'initial_data' => [
                         'name' => 'Neue Pflanze',
                         'type' => $this->faker->randomElement(['gemuese', 'blume', 'kraeuter']),
-                    ]
+                    ],
                 ],
                 'display_text' => 'hat die Pflanze erstellt',
             ];
@@ -79,10 +80,10 @@ class PlantTimelineProjectionFactory extends Factory
                     'changed_fields' => $changedFields,
                     'changes' => array_combine(
                         $changedFields,
-                        array_map(fn() => $this->faker->sentence(), $changedFields)
-                    )
+                        array_map(fn () => $this->faker->sentence(), $changedFields)
+                    ),
                 ],
-                'display_text' => 'hat ' . implode(', ', $changedFields) . ' aktualisiert',
+                'display_text' => 'hat '.implode(', ', $changedFields).' aktualisiert',
             ];
         });
     }
@@ -97,21 +98,21 @@ class PlantTimelineProjectionFactory extends Factory
 
             return [
                 'event_type' => 'update_requested',
-                'performed_by' => $this->faker->randomElement(array_filter(self::$usernames, fn($u) => !str_contains($u, 'Admin'))),
+                'performed_by' => $this->faker->randomElement(array_filter(self::$usernames, fn ($u) => ! str_contains($u, 'Admin'))),
                 'event_details' => [
                     'requested_fields' => $requestedFields,
                     'proposed_changes' => array_combine(
                         $requestedFields,
-                        array_map(fn() => $this->faker->sentence(), $requestedFields)
+                        array_map(fn () => $this->faker->sentence(), $requestedFields)
                     ),
                     'reason' => $this->faker->randomElement([
                         'Fehlerkorrektur',
                         'Zusätzliche Information',
                         'Verbesserung der Beschreibung',
-                        'Aktualisierung der Kategorie'
-                    ])
+                        'Aktualisierung der Kategorie',
+                    ]),
                 ],
-                'display_text' => 'hat Änderungen für ' . implode(', ', $requestedFields) . ' vorgeschlagen',
+                'display_text' => 'hat Änderungen für '.implode(', ', $requestedFields).' vorgeschlagen',
             ];
         });
     }
@@ -127,8 +128,8 @@ class PlantTimelineProjectionFactory extends Factory
                         'Duplikat entfernt',
                         'Falsche Information',
                         'Nicht relevant',
-                        'Community-Anfrage'
-                    ])
+                        'Community-Anfrage',
+                    ]),
                 ],
                 'display_text' => 'hat die Pflanze gelöscht',
             ];
@@ -145,8 +146,8 @@ class PlantTimelineProjectionFactory extends Factory
                     'reason' => $this->faker->randomElement([
                         'Löschung war ein Fehler',
                         'Community-Anfrage zur Wiederherstellung',
-                        'Neue Informationen verfügbar'
-                    ])
+                        'Neue Informationen verfügbar',
+                    ]),
                 ],
                 'display_text' => 'hat die Pflanze wiederhergestellt',
             ];

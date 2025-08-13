@@ -1,6 +1,7 @@
 <?php
 
 // App\Domains\Admin\Plants\Mappers\PlantTimelineMapper.php - Updated für echte Daten
+
 namespace App\Domains\Admin\Plants\Mappers;
 
 use App\Domains\Admin\Plants\ValueObjects\TimelineEvent;
@@ -62,12 +63,14 @@ class PlantTimelineMapper
     private function extractChangedFields(array $event): ?array
     {
         $eventDetails = $event['event_details'] ?? [];
+
         return $eventDetails['changed_fields'] ?? null;
     }
 
     private function extractRequestedFields(array $event): ?array
     {
         $eventDetails = $event['event_details'] ?? [];
+
         return $eventDetails['requested_fields'] ?? null;
     }
 
@@ -93,8 +96,8 @@ class PlantTimelineMapper
                 'event_type' => 'created',
                 'performed_by' => $plantData['created_by'] ?? 'Admin_User',
                 'performed_at' => $createdAt,
-                'event_details' => []
-            ]
+                'event_details' => [],
+            ],
         ];
 
         // Wenn Community requested
@@ -103,7 +106,7 @@ class PlantTimelineMapper
                 'event_type' => 'requested',
                 'performed_by' => 'Community_User',
                 'performed_at' => $createdAt->copy()->subDays(5),
-                'event_details' => []
+                'event_details' => [],
             ]);
         }
 
@@ -112,14 +115,14 @@ class PlantTimelineMapper
             'event_type' => 'update_requested',
             'performed_by' => 'Botaniker_Bob',
             'performed_at' => $createdAt->copy()->addDays(2),
-            'event_details' => ['requested_fields' => ['description']]
+            'event_details' => ['requested_fields' => ['description']],
         ];
 
         $dummyEvents[] = [
             'event_type' => 'updated',
             'performed_by' => 'Admin_User',
             'performed_at' => $createdAt->copy()->addDays(3),
-            'event_details' => ['changed_fields' => ['description']]
+            'event_details' => ['changed_fields' => ['description']],
         ];
 
         return $this->mapTimelineEventsFromDatabase($dummyEvents);

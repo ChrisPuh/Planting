@@ -22,7 +22,7 @@ class EloquentPlantRepository implements PlantRepositoryInterface
 
         return [
             'plant' => $plant->toArray(),
-            'timeline_events' => $timelineEvents
+            'timeline_events' => $timelineEvents,
         ];
     }
 
@@ -49,9 +49,9 @@ class EloquentPlantRepository implements PlantRepositoryInterface
 
             if (isset($filters['search'])) {
                 $query->where(function ($q) use ($filters) {
-                    $q->where('name', 'like', '%' . $filters['search'] . '%')
-                        ->orWhere('description', 'like', '%' . $filters['search'] . '%')
-                        ->orWhere('latin_name', 'like', '%' . $filters['search'] . '%');
+                    $q->where('name', 'like', '%'.$filters['search'].'%')
+                        ->orWhere('description', 'like', '%'.$filters['search'].'%')
+                        ->orWhere('latin_name', 'like', '%'.$filters['search'].'%');
                 });
             }
 

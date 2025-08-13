@@ -5,14 +5,20 @@ namespace App\Models;
 use Database\Factories\PlantFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property string $uuid
+ */
 class Plant extends Model
 {
     /** @use HasFactory<PlantFactory> */
     use HasFactory;
 
     protected $primaryKey = 'uuid';
+
     protected $keyType = 'string';
+
     public $incrementing = false;
 
     protected $fillable = [
@@ -66,7 +72,7 @@ class Plant extends Model
     // Accessors
     public function getIsActiveAttribute(): bool
     {
-        return !$this->is_deleted;
+        return ! $this->is_deleted;
     }
 
     public function getTypeDisplayAttribute(): string

@@ -1,6 +1,7 @@
 <?php
 
 // App\Domains\Admin\Plants\Contracts\PlantRepositoryInterface.php
+
 namespace App\Domains\Admin\Plants\Contracts;
 
 interface PlantRepositoryInterface

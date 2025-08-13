@@ -5,16 +5,14 @@ namespace App\Domains\Admin\Plants\ViewModels\Index;
 readonly class PlantListItemViewModel
 {
     public function __construct(
-        public int     $id,
-        public string  $name,
-        public string  $type,
+        public int $id,
+        public string $name,
+        public string $type,
         public ?string $image_url,
-        public string  $status, // 'active', 'deleted', 'requested'
+        public string $status, // 'active', 'deleted', 'requested'
         public ?string $category = null,
         public ?string $created_at = null,
-    )
-    {
-    }
+    ) {}
 
     public static function from(array $data): self
     {
@@ -55,11 +53,11 @@ readonly class PlantListItemViewModel
 
     private static function determineStatus(array $data): string
     {
-        if (!empty($data['deleted_at'])) {
+        if (! empty($data['deleted_at'])) {
             return 'deleted';
         }
 
-        if (!empty($data['requested_by']) && !empty($data['requested_at'])) {
+        if (! empty($data['requested_by']) && ! empty($data['requested_at'])) {
             return 'requested';
         }
 

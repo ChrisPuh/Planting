@@ -1,11 +1,12 @@
 <?php
 
 // database/seeders/PlantSeeder.php
+
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Plant;
 use App\Models\PlantTimelineProjection;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 class PlantSeeder extends Seeder

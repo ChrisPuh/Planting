@@ -11,12 +11,11 @@ class PlantHeaderViewModel
     use HasSectionInfo;
 
     public function __construct(
-        public readonly string                 $name,
-        public readonly string                 $type,
-        public readonly ?string                $imageUrl = null,
+        public readonly string $name,
+        public readonly string $type,
+        public readonly ?string $imageUrl = null,
         private readonly ?PlantBadgesViewModel $badges = null,
-    )
-    {
+    ) {
         $this->sectionTitle = null;
         $this->sectionPartial = 'partials.plants.show.heading';
         $this->variableName = 'header';
