@@ -1,5 +1,8 @@
 <?php
 
+use App\Domains\PlantManagement;
+use App\Domains\RequestManagement;
+
 return [
 
     /*
@@ -23,6 +26,9 @@ return [
      */
     'projectors' => [
         // App\Projectors\YourProjector::class
+        PlantManagement\Projectors\PlantProjector::class,
+        PlantManagement\Projectors\PlantTimelineProjector::class,
+        RequestManagement\Projectors\RequestQueueProjector::class,
     ],
 
     /*

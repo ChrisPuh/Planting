@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Database\Factories\PlantFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Plant extends Model
 {
     /** @use HasFactory<PlantFactory> */
-    use HasFactory;
+    use HasFactory, HasUuids;
 
     protected $primaryKey = 'uuid';
 
@@ -41,6 +42,14 @@ class Plant extends Model
         'was_community_requested' => 'boolean',
         'last_event_at' => 'datetime',
     ];
+
+    /**
+     * Get the columns that should receive a unique identifier.
+     */
+    public function uniqueIds(): array
+    {
+        return ['uuid'];
+    }
 
     public function timelineEvents(): HasMany
     {
