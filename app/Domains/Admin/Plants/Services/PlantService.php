@@ -1,65 +1,68 @@
 <?php
 
-// App\Domains\Admin\Plants\Services\PlantService.php - Clean mit Mapper
+// App\Domains\Admin\Plants\Services\PlantService.php - Updated
 namespace App\Domains\Admin\Plants\Services;
 
 use App\Domains\Admin\Plants\ViewModels\Show\PlantViewModel;
 use App\Domains\Admin\Plants\Mappers\PlantViewModelMapper;
 use App\Domains\Admin\Plants\Mappers\PlantTimelineMapper;
+use App\Domains\Admin\Plants\Contracts\PlantRepositoryInterface;
 
 readonly class PlantService
 {
     public function __construct(
-        private PlantViewModelMapper $viewModelMapper,
-        private PlantTimelineMapper  $timelineMapper,
-        // private readonly PlantRepository $repository, // Später
+        private PlantRepositoryInterface $repository,
+        private PlantViewModelMapper     $viewModelMapper,
+        private PlantTimelineMapper      $timelineMapper,
     ) {}
 
-    public function getPlantForShow(int $id): PlantViewModel
+    public function getPlantForShow(string $plantUuid): PlantViewModel
     {
-        // 1. Daten holen (später aus Repository)
-        $plantData = $this->getDummyPlantData($id);
+        // 1. Plant + Timeline aus Repository holen
+        $data = $this->repository->findWithTimeline($plantUuid);
 
-        // 2. Timeline Events erstellen (später aus DB)
-        $timelineData = $this->timelineMapper->createDummyTimelineEvents($plantData);
+        // 2. Timeline Events zu TimelineEvent ValueObjects mappen
+        $timelineEvents = $this->timelineMapper->mapTimelineEventsFromDatabase(
+            $data['timeline_events']
+        );
 
-        // 3. Zu ViewModel mappen
-        return $this->viewModelMapper->toShowViewModel($plantData, $timelineData);
+        // 3. Plant ViewModel erstellen
+        return $this->viewModelMapper->toShowViewModel(
+            $data['plant'],
+            $timelineEvents
+        );
     }
 
-    private function getDummyPlantData(int $id): array
+    public function getPlantForEdit(string $plantUuid): PlantViewModel
     {
-        return [
-            'id' => 1,
-            'name' => 'Rote Beete',
-            'type' => 'Gemüse',
-            'image_url' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Beets-Bundle.jpg/330px-Beets-Bundle.jpg',
-            'category' => 'Wurzelgemüse',
-            'latin_name' => null,
-            'description' => 'Die Rote Beete ist eine Wurzelgemüseart, die für ihre leuchtend rote Farbe bekannt ist. Sie wird oft in Salaten, Suppen und als Beilage verwendet. Reich an Vitaminen und Mineralien, ist sie auch für ihre gesundheitsfördernden Eigenschaften bekannt.',
+        // Für Edit könnten andere Regeln gelten (z.B. keine Timeline)
+        return $this->getPlantForShow($plantUuid);
+    }
 
-            'requested_by' => auth()->user()?->is_admin ? 'Max Mustermann' : null,
-            'requested_at' => now()->subDays(10),
-            'created_by' => auth()->user()?->is_admin ? 'Admin User' : null,
-            'created_at' => now()->subDays(5),
-            'updated_by' => auth()->user()?->is_admin ? 'Max Mustermann' : null,
-            'updated_at' => now()->subDays(2),
-            'deleted_by' => auth()->user()?->is_admin ? 'Admin User' : null,
-            'deleted_at' => now()->subDays(1),
+    public function getPlantsForIndex(?array $filters = null): array
+    {
+        $plants = $this->repository->getAll($filters);
+
+        return array_map(function($plant) {
+            // Für Index brauchen wir eine einfachere Version
+            return $this->viewModelMapper->toIndexViewModel($plant);
+        }, $plants);
+    }
+
+    public function getAllPlantTypes(): array
+    {
+        // Helper method für Filter-Dropdown
+        return [
+            'gemuese' => 'Gemüse',
+            'kraeuter' => 'Kräuter',
+            'blume' => 'Blumen',
+            'strauch' => 'Sträucher',
+            'baum' => 'Bäume'
         ];
     }
-}
 
-// Später mit echten Daten:
-/*
-public function getPlantForShow(int $id): PlantViewModel
-{
-    // 1. Daten aus Repository
-    $plant = $this->repository->findWithTimeline($id);
-    $plantData = $plant->toArray();
-    $timelineData = $plant->timelineEvents->toArray();
-
-    // 2. Zu ViewModel mappen
-    return $this->viewModelMapper->toShowViewModel($plantData, $timelineData);
+    public function searchPlants(string $query): array
+    {
+        return $this->getPlantsForIndex(['search' => $query]);
+    }
 }
-*/

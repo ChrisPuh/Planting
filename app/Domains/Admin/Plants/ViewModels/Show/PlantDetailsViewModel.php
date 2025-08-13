@@ -10,10 +10,10 @@ class PlantDetailsViewModel
     use HasSectionInfo;
 
     public function __construct(
-        public readonly ?string $category = null,
-        public readonly ?string $latinName = null,
-        public readonly ?string $description = null,
-        private readonly ?int   $plantId = null,
+        public readonly ?string  $category = null,
+        public readonly ?string  $latinName = null,
+        public readonly ?string  $description = null,
+        private readonly ?string $plantId = null, // ← Flexibel für UUID oder ID
     )
     {
         $this->sectionTitle = 'Details';
@@ -21,7 +21,7 @@ class PlantDetailsViewModel
         $this->variableName = 'details';
     }
 
-    public static function from(?string $category, ?string $latinName, ?string $description, ?int $plantId = null): self
+    public static function from(?string $category, ?string $latinName, ?string $description, string|int|null $plantId = null): self
     {
         return new self($category, $latinName, $description, $plantId);
     }

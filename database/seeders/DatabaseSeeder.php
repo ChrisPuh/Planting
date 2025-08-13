@@ -24,5 +24,9 @@ class DatabaseSeeder extends Seeder
                 'email' => 'chrisganzert@planting.com',
                 'password' => Hash::make('password'),
             ]);
+
+        $this->call([
+            PlantSeeder::class,
+        ]);
     }
 }

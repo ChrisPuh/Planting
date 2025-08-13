@@ -1,13 +1,13 @@
 @props([
-    'id',
+    'uuid',
     'name',
 ])
 
-<flux:modal.trigger name="delete-plant-{{$id}}">
+<flux:modal.trigger name="delete-plant-{{$uuid}}">
     <flux:button icon="trash" variant="danger">Delete</flux:button>
 </flux:modal.trigger>
 
-<flux:modal name="delete-plant-{{$id}}" class="min-w-[22rem]">
+<flux:modal name="delete-plant-{{$uuid}}" class="min-w-[22rem]">
     <div class="space-y-6">
         <div>
             <flux:heading size="lg">{{__('Pflanze löschen?')}}</flux:heading>

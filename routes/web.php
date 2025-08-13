@@ -25,8 +25,8 @@ Route::middleware('auth')->group(function () {
     Volt::route('plants/dashboard', 'plant.dashboard')->name('plants.dashboard');
     Volt::route('plants/index', 'plant.index')->name('plants.index');
     Volt::route('plants/create', 'plant.create')->name('plants.create');
-    Volt::route('plants/show/{id}', 'plant.show')->name('plants.show');
-    Volt::route('plants/edit', 'plant.edit')->name('plants.edit');
+    Volt::route('plants/show/{uuid}', 'plant.show')->name('plants.show');
+    Volt::route('plants/edit/{uuid}', 'plant.edit')->name('plants.edit');
 });
 
 require __DIR__ . '/auth.php';

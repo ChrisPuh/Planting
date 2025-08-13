@@ -1,88 +1,121 @@
 <?php
 
+// App\Domains\Admin\Plants\Mappers\PlantViewModelMapper.php - Updated
 namespace App\Domains\Admin\Plants\Mappers;
 
 use App\Domains\Admin\Plants\ViewModels\Show\PlantViewModel;
 use App\Domains\Admin\Plants\ValueObjects\TimelineEvent;
-use Illuminate\Support\Carbon;
 
 class PlantViewModelMapper
 {
-    public function toShowViewModel(array $plantData, array $timelineData = []): PlantViewModel
+    public function toShowViewModel(array $plantData, array $timelineEvents): PlantViewModel
     {
+        // Extrahiere Timeline-Daten für Metadata
+        $metadata = $this->extractMetadataFromTimeline($plantData, $timelineEvents);
+
         return new PlantViewModel(
-            id: $plantData['id'],
+            uuid: $plantData['uuid'], // ← NEU: UUID hinzufügen
             name: $plantData['name'],
-            type: $plantData['type'],
-            image_url: $plantData['image_url'] ?? null,
-            category: $plantData['category'] ?? null,
-            latin_name: $plantData['latin_name'] ?? null,
-            description: $plantData['description'] ?? null,
+            type: $this->mapTypeToDisplay($plantData['type']),
+            image_url: $plantData['image_url'],
 
-            requested_by: $plantData['requested_by'] ?? null,
-            requested_at: $plantData['requested_at'],
-            created_by: $plantData['created_by'] ?? null,
-            created_at: $plantData['created_at'],
-            updated_by: $plantData['updated_by'] ?? null,
-            updated_at: $plantData['updated_at'] ?? null,
-            deleted_by: $plantData['deleted_by'] ?? null,
-            deleted_at: $plantData['deleted_at'] ?? null,
+            // Details
+            category: $plantData['category'],
+            latin_name: $plantData['latin_name'],
+            description: $plantData['description'],
 
-            timelineEvents: $this->mapTimelineEvents($timelineData)
+            // Metadata aus Timeline extrahiert
+            requested_by: $metadata['requested_by'],
+            requested_at: $metadata['requested_at'],
+            created_by: $metadata['created_by'],
+            created_at: $metadata['created_at'],
+            updated_by: $metadata['updated_by'],
+            updated_at: $metadata['updated_at'],
+            deleted_by: $metadata['deleted_by'],
+            deleted_at: $metadata['deleted_at'],
+
+            // Timeline Events übergeben
+            timelineEvents: $timelineEvents
         );
     }
 
-    /**
-     * @param array $timelineData
-     * @return TimelineEvent[]
-     */
-    private function mapTimelineEvents(array $timelineData): array
+    public function toIndexViewModel(array $plantData): array
     {
-        return array_map(function ($event) {
-            return match ($event['type']) {
-                'requested' => TimelineEvent::requested(
-                    $event['by'],
-                    $this->formatDate($event['at']),
-                    $event['show_by'] ?? false
-                ),
-                'created' => TimelineEvent::created(
-                    $event['by'],
-                    $this->formatDate($event['at']),
-                    $event['show_by'] ?? true
-                ),
-                'updated' => TimelineEvent::updated(
-                    $event['by'],
-                    $this->formatDate($event['at']),
-                    $event['show_by'] ?? true,
-                    $event['details'] ?? null
-                ),
-                'update_requested' => TimelineEvent::updateRequested(
-                    $event['by'],
-                    $this->formatDate($event['at']),
-                    $event['show_by'] ?? false,
-                    $event['details'] ?? null
-                ),
-                'deleted' => TimelineEvent::deleted(
-                    $event['by'],
-                    $this->formatDate($event['at']),
-                    $event['show_by'] ?? true
-                ),
-                'restored' => TimelineEvent::restored(
-                    $event['by'],
-                    $this->formatDate($event['at']),
-                    $event['show_by'] ?? true
-                ),
-                default => throw new \InvalidArgumentException("Unknown timeline event type: {$event['type']}")
-            };
-        }, $timelineData);
+        return [
+            'uuid' => $plantData['uuid'],
+            'name' => $plantData['name'],
+            'type' => $this->mapTypeToDisplay($plantData['type']),
+            'category' => $plantData['category'],
+            'image_url' => $plantData['image_url'],
+            'is_deleted' => $plantData['is_deleted'],
+            'was_community_requested' => $plantData['was_community_requested'],
+            'last_event_at' => $plantData['last_event_at'],
+        ];
     }
 
-    private function formatDate($date): ?string
+    private function extractMetadataFromTimeline(array $plantData, array $timelineEvents): array
     {
-        if (!$date) return null;
+        $metadata = [
+            'requested_by' => null,
+            'requested_at' => null,
+            'created_by' => null,
+            'created_at' => null,
+            'updated_by' => null,
+            'updated_at' => null,
+            'deleted_by' => null,
+            'deleted_at' => null,
+        ];
 
-        return $date instanceof Carbon
-            ? $date->format('d.m.Y H:i')
-            : Carbon::parse($date)->format('d.m.Y H:i');
+        // Durchlaufe Timeline Events und extrahiere Metadata
+        foreach ($timelineEvents as $event) {
+            /** @var TimelineEvent $event */
+            switch ($event->type) {
+                case 'requested':
+                    $metadata['requested_by'] = $event->by;
+                    $metadata['requested_at'] = $event->at;
+                    break;
+
+                case 'created':
+                    $metadata['created_by'] = $event->by;
+                    $metadata['created_at'] = $event->at;
+                    break;
+
+                case 'updated':
+                    $metadata['updated_by'] = $event->by;
+                    $metadata['updated_at'] = $event->at;
+                    break;
+
+                case 'deleted':
+                    $metadata['deleted_by'] = $event->by;
+                    $metadata['deleted_at'] = $event->at;
+                    break;
+
+                case 'restored':
+                    // Bei Restore, delete-Info löschen
+                    $metadata['deleted_by'] = null;
+                    $metadata['deleted_at'] = null;
+                    break;
+            }
+        }
+
+        // Fallback auf Plant-Daten falls Timeline leer
+        if (!$metadata['created_at'] && isset($plantData['created_at'])) {
+            $metadata['created_by'] = $plantData['created_by'];
+            $metadata['created_at'] = $plantData['created_at'];
+        }
+
+        return $metadata;
+    }
+
+    private function mapTypeToDisplay(string $type): string
+    {
+        return match($type) {
+            'gemuese' => 'Gemüse',
+            'kraeuter' => 'Kräuter',
+            'blume' => 'Blumen',
+            'strauch' => 'Sträucher',
+            'baum' => 'Bäume',
+            default => ucfirst($type)
+        };
     }
 }
