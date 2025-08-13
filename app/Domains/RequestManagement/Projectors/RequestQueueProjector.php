@@ -58,8 +58,9 @@ class RequestQueueProjector extends Projector
     {
         $request = RequestQueueProjection::whereUuid($event->requestId)->first();
 
-        if (!$request) {
+        if (! $request) {
             \Log::error("Request not found for approval: {$event->requestId}");
+
             return;
         }
 
@@ -78,8 +79,9 @@ class RequestQueueProjector extends Projector
     {
         $request = RequestQueueProjection::whereUuid($event->requestId)->first();
 
-        if (!$request) {
+        if (! $request) {
             \Log::error("Request not found for rejection: {$event->requestId}");
+
             return;
         }
 

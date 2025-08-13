@@ -75,7 +75,7 @@ describe('Projector Integration Tests', function () {
                 changes: [
                     'name' => 'Updated Tomato',
                     'description' => 'Now with description',
-                    'category' => 'Fruchtgemüse'
+                    'category' => 'Fruchtgemüse',
                 ],
                 updatedBy: 'Admin User',
                 updatedAt: now()->addMinutes(5)->toISOString()
@@ -217,7 +217,7 @@ describe('Projector Integration Tests', function () {
                 plantId: $this->plantId,
                 changes: [
                     'name' => 'Updated Plant',
-                    'description' => 'Added description'
+                    'description' => 'Added description',
                 ],
                 updatedBy: 'Editor',
                 updatedAt: now()->addMinutes(10)->toISOString()
@@ -285,7 +285,7 @@ describe('Projector Integration Tests', function () {
                 plantId: $this->plantId,
                 proposedData: [
                     'name' => 'Requested Plant',
-                    'type' => 'kraeuter'
+                    'type' => 'kraeuter',
                 ],
                 reason: 'Testing request timeline',
                 requestedBy: 'Community User',
@@ -316,7 +316,7 @@ describe('Projector Integration Tests', function () {
                 proposedData: [
                     'name' => 'Community Requested Plant',
                     'type' => 'kraeuter',
-                    'description' => 'This plant was requested by the community'
+                    'description' => 'This plant was requested by the community',
                 ],
                 reason: 'We need more herbs in our database',
                 requestedBy: 'Community Member',
@@ -350,7 +350,7 @@ describe('Projector Integration Tests', function () {
                 plantId: $this->plantId,
                 proposedChanges: [
                     'description' => 'Updated description',
-                    'latin_name' => 'Botanicus updateus'
+                    'latin_name' => 'Botanicus updateus',
                 ],
                 reason: 'Current information is outdated',
                 requestedBy: 'Expert User',

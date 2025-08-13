@@ -42,9 +42,10 @@ class PlantProjector extends Projector
             ->whereUuid($event->plantId)
             ->first();
 
-        if (!$plant) {
+        if (! $plant) {
             // Log error but don't throw exception to avoid breaking other projectors
             \Log::error("Plant not found for update: {$event->plantId}");
+
             return;
         }
 
@@ -63,8 +64,9 @@ class PlantProjector extends Projector
     {
         $plant = Plant::whereUuid($event->plantId)->first();
 
-        if (!$plant) {
+        if (! $plant) {
             \Log::error("Plant not found for deletion: {$event->plantId}");
+
             return;
         }
 
@@ -82,8 +84,9 @@ class PlantProjector extends Projector
     {
         $plant = Plant::whereUuid($event->plantId)->first();
 
-        if (!$plant) {
+        if (! $plant) {
             \Log::error("Plant not found for restoration: {$event->plantId}");
+
             return;
         }
 

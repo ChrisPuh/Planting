@@ -23,7 +23,7 @@ class PlantTimelineProjector extends Projector
             'event_type' => 'requested',
             'performed_by' => $event->requestedBy,
             'performed_at' => $event->requestedAt,
-            'display_text' => "Neue Pflanze wurde beantragt",
+            'display_text' => 'Neue Pflanze wurde beantragt',
             'event_details' => [
                 'request_id' => $event->requestId,
                 'proposed_data' => $event->proposedData,
@@ -74,7 +74,7 @@ class PlantTimelineProjector extends Projector
             'event_type' => 'update_requested',
             'performed_by' => $event->requestedBy,
             'performed_at' => $event->requestedAt,
-            'display_text' => "Änderung wurde beantragt",
+            'display_text' => 'Änderung wurde beantragt',
             'event_details' => [
                 'request_id' => $event->requestId,
                 'proposed_changes' => $event->proposedChanges,
@@ -114,7 +114,7 @@ class PlantTimelineProjector extends Projector
     {
         $displayText = $event->reason
             ? "Pflanze wurde gelöscht (Grund: {$event->reason})"
-            : "Pflanze wurde gelöscht";
+            : 'Pflanze wurde gelöscht';
 
         PlantTimelineProjection::create([
             'plant_uuid' => $event->plantId,
@@ -139,7 +139,7 @@ class PlantTimelineProjector extends Projector
             'event_type' => 'restored',
             'performed_by' => $event->restoredBy,
             'performed_at' => $event->restoredAt,
-            'display_text' => "Pflanze wurde wiederhergestellt",
+            'display_text' => 'Pflanze wurde wiederhergestellt',
             'event_details' => [],
             'sequence_number' => $this->getNextSequenceNumber($event->plantId),
         ]);
@@ -172,7 +172,7 @@ class PlantTimelineProjector extends Projector
         ];
 
         $translatedFields = array_map(
-            fn($field) => $fieldTranslations[$field] ?? ucfirst($field),
+            fn ($field) => $fieldTranslations[$field] ?? ucfirst($field),
             $fields
         );
 
@@ -185,7 +185,8 @@ class PlantTimelineProjector extends Projector
         }
 
         $last = array_pop($translatedFields);
-        return implode(', ', $translatedFields) . ' und ' . $last;
+
+        return implode(', ', $translatedFields).' und '.$last;
     }
 
     /**

@@ -81,7 +81,7 @@ class Plant extends Model
     // Accessors
     public function getIsActiveAttribute(): bool
     {
-        return !$this->is_deleted;
+        return ! $this->is_deleted;
     }
 
     public function getTypeDisplayAttribute(): string

@@ -71,8 +71,9 @@ class ProjectionManagerCommand extends Command
 
     private function showProjectorStatus(string $projectorName): void
     {
-        if (!isset($this->projectors[$projectorName])) {
+        if (! isset($this->projectors[$projectorName])) {
             $this->error("Unknown projector: {$projectorName}");
+
             return;
         }
 
@@ -86,7 +87,7 @@ class ProjectionManagerCommand extends Command
             $this->line("   Last Event: #{$lastProcessedEvent->id} - {$lastProcessedEvent->event_class}");
             $this->line("   Processed: {$lastProcessedEvent->created_at->diffForHumans()}");
         } else {
-            $this->line("   <fg=yellow>No events processed yet</>");
+            $this->line('   <fg=yellow>No events processed yet</>');
         }
 
         $this->newLine();
@@ -94,9 +95,10 @@ class ProjectionManagerCommand extends Command
 
     private function resetProjections(?string $projectorName = null): int
     {
-        if (!$this->option('force')) {
-            if (!$this->confirm('⚠️  This will delete ALL projection data. Are you sure?')) {
+        if (! $this->option('force')) {
+            if (! $this->confirm('⚠️  This will delete ALL projection data. Are you sure?')) {
                 $this->info('Operation cancelled.');
+
                 return Command::SUCCESS;
             }
         }
@@ -112,13 +114,15 @@ class ProjectionManagerCommand extends Command
         }
 
         $this->info('✅ Projections reset successfully!');
+
         return Command::SUCCESS;
     }
 
     private function resetSpecificProjector(string $projectorName): void
     {
-        if (!isset($this->projectors[$projectorName])) {
+        if (! isset($this->projectors[$projectorName])) {
             $this->error("Unknown projector: {$projectorName}");
+
             return;
         }
 
@@ -137,9 +141,10 @@ class ProjectionManagerCommand extends Command
 
     private function replayEvents(?string $projectorName = null): int
     {
-        if (!$this->option('force')) {
-            if (!$this->confirm('🔄 This will replay all events to rebuild projections. Continue?')) {
+        if (! $this->option('force')) {
+            if (! $this->confirm('🔄 This will replay all events to rebuild projections. Continue?')) {
                 $this->info('Operation cancelled.');
+
                 return Command::SUCCESS;
             }
         }
@@ -147,8 +152,9 @@ class ProjectionManagerCommand extends Command
         $this->info('🎬 Replaying events...');
 
         if ($projectorName) {
-            if (!isset($this->projectors[$projectorName])) {
+            if (! isset($this->projectors[$projectorName])) {
                 $this->error("Unknown projector: {$projectorName}");
+
                 return Command::FAILURE;
             }
 
@@ -156,7 +162,7 @@ class ProjectionManagerCommand extends Command
             $this->line("   Replaying events for {$projectorName} projector...");
             Projectionist::replay($projectorClass);
         } else {
-            $this->line("   Replaying events for all projectors...");
+            $this->line('   Replaying events for all projectors...');
             Projectionist::replay();
         }
 

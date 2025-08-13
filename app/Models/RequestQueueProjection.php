@@ -164,7 +164,7 @@ class RequestQueueProjection extends Model
      */
     public function getProposedFieldsAttribute(): array
     {
-        if (!$this->is_update_request) {
+        if (! $this->is_update_request) {
             return [];
         }
 
@@ -192,7 +192,7 @@ class RequestQueueProjection extends Model
         ];
 
         $translatedFields = array_map(
-            fn($field) => $fieldTranslations[$field] ?? ucfirst($field),
+            fn ($field) => $fieldTranslations[$field] ?? ucfirst($field),
             $fields
         );
 
@@ -205,7 +205,8 @@ class RequestQueueProjection extends Model
         }
 
         $last = array_pop($translatedFields);
-        return implode(', ', $translatedFields) . ' und ' . $last;
+
+        return implode(', ', $translatedFields).' und '.$last;
     }
 
     /**
