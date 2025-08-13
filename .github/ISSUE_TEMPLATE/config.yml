@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 General Discussion
+    url: https://github.com/ChrisPuh/Planting/discussions
+    about: For questions, ideas, and general discussion about the project
+  - name: 📚 Documentation
+    url: https://github.com/ChrisPuh/Planting/wiki
+    about: Check the project wiki for documentation and guides
