@@ -11,7 +11,5 @@ class RequestRejected extends ShouldBeStored
         public readonly string $reviewedBy,
         public readonly string $reviewedAt,
         public readonly string $comment,
-    )
-    {
-    }
+    ) {}
 }

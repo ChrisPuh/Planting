@@ -10,7 +10,5 @@ class PlantRestored extends ShouldBeStored
         public readonly string $plantId,
         public readonly string $restoredBy,
         public readonly string $restoredAt,
-    )
-    {
-    }
+    ) {}
 }
