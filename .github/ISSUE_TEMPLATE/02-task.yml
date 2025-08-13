@@ -1,0 +1,143 @@
+name: 🔧 Task
+description: Specific development task or implementation work
+title: "Task: [Action] - [Specific Goal]"
+labels: [ "type:task" ]
+assignees: [ ]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Task Template
+        Use this for specific, actionable development work (typically 4-20 hours).
+        📋 **Note:** This task will be automatically added to the Plant Database project.
+
+  - type: input
+    id: epic_reference
+    attributes:
+      label: Epic Reference
+      description: Which epic does this task belong to?
+      placeholder: "e.g., #2 - Event Sourcing Foundation Setup"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What needs to be implemented?
+      placeholder: "Clear description of what should be built or changed"
+    validations:
+      required: true
+
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Implementation Tasks
+      description: Break down the work into specific steps
+      placeholder: |
+        - [ ] Create [specific file/component]
+        - [ ] Implement [specific functionality]
+        - [ ] Add [specific feature]
+        - [ ] Test [specific scenario]
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: How do we know this task is complete?
+      placeholder: |
+        - [ ] Specific, testable criteria
+        - [ ] Measurable outcomes
+        - [ ] Definition of done
+    validations:
+      required: true
+
+  - type: textarea
+    id: files_to_create
+    attributes:
+      label: Files to Create
+      description: List files that need to be created
+      placeholder: |
+        - `path/to/NewFile.php`
+        - `path/to/AnotherFile.php`
+
+  - type: textarea
+    id: files_to_modify
+    attributes:
+      label: Files to Modify
+      description: List existing files that need changes
+      placeholder: |
+        - `path/to/ExistingFile.php`
+        - `config/someconfig.php`
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How urgent is this task?
+      options:
+        - Critical (Blocking other work)
+        - High (Important for current milestone)
+        - Medium (Should be done this phase)
+        - Low (Can be deferred)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: domain
+    attributes:
+      label: Domain
+      description: Which domain does this task belong to?
+      options:
+        - Plant Management
+        - Request Management
+        - Timeline & Events
+        - Admin Interface
+        - Infrastructure
+        - User Interface
+        - Testing
+        - Documentation
+    validations:
+      required: true
+
+  - type: input
+    id: estimate
+    attributes:
+      label: Time Estimate
+      description: How long do you estimate this will take?
+      placeholder: "e.g., 4 hours, 1 day, 2 days"
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: What other issues must be completed first?
+      placeholder: |
+        - #[number] - [description]
+        - External dependency: [description]
+
+  - type: textarea
+    id: reference
+    attributes:
+      label: Reference Materials
+      description: Links to documentation, implementation plans, etc.
+      placeholder: |
+        - Implementation Plan: [section reference]
+        - Documentation: [link]
+        - Examples: [link]
+
+  - type: dropdown
+    id: project_assignment
+    attributes:
+      label: Project Assignment (Optional)
+      description: Will be auto-assigned to Plant Database project unless specified otherwise
+      options:
+        - Plant Database - Event Sourcing (Default)
+        - Other/External
+        - Skip Project Assignment
+      default: 0
+    validations:
+      required: false
