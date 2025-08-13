@@ -6,12 +6,14 @@ use App\Domains\RequestManagement\Events\PlantCreationRequested;
 use App\Domains\RequestManagement\Events\PlantUpdateRequested;
 use App\Domains\RequestManagement\Events\RequestApproved;
 use App\Domains\RequestManagement\Events\RequestRejected;
+use DomainException;
+use Illuminate\Support\Str;
+use InvalidArgumentException;
 use Spatie\EventSourcing\AggregateRoots\AggregateRoot;
 
 class RequestAggregate extends AggregateRoot
 {
     // Aggregate state properties
-    //TODO implement a proper state management system with enum states
     private string $status = 'pending';
     private string $requestType = '';
     private string $requestedBy = '';
@@ -28,7 +30,6 @@ class RequestAggregate extends AggregateRoot
      */
     public function submitPlantCreationRequest(
         array  $proposedData,
-        // TODO implement an enum for reasons
         string $reason,
         string $requestedBy
     ): self
@@ -39,7 +40,7 @@ class RequestAggregate extends AggregateRoot
         $this->validateUserName($requestedBy);
 
         // Generate target plant UUID for the future plant
-        $plantId = \Str::uuid()->toString();
+        $plantId = Str::uuid()->toString();
 
         $this->recordThat(new PlantCreationRequested(
             requestId: $this->uuid(),
@@ -84,11 +85,11 @@ class RequestAggregate extends AggregateRoot
     /**
      * Approve the request
      */
-    public function approve(?string $comment = null): self
+    public function approve(?string $comment = null, string $reviewedBy = 'System'): self
     {
         // Business rule: Only pending requests can be approved
         if ($this->status !== 'pending') {
-            throw new \DomainException('Only pending requests can be approved');
+            throw new DomainException('Only pending requests can be approved');
         }
 
         // Validate comment if provided
@@ -98,7 +99,7 @@ class RequestAggregate extends AggregateRoot
 
         $this->recordThat(new RequestApproved(
             requestId: $this->uuid(),
-            reviewedBy: auth()->user()->name ?? 'System',
+            reviewedBy: $reviewedBy, // FIXED: Now uses the parameter
             reviewedAt: now()->toISOString(),
             comment: $comment ? trim($comment) : null,
         ));
@@ -109,11 +110,11 @@ class RequestAggregate extends AggregateRoot
     /**
      * Reject the request with mandatory comment
      */
-    public function reject(string $comment): self
+    public function reject(string $comment, string $reviewedBy = 'System'): self
     {
         // Business rule: Only pending requests can be rejected
         if ($this->status !== 'pending') {
-            throw new \DomainException('Only pending requests can be rejected');
+            throw new DomainException('Only pending requests can be rejected');
         }
 
         // Comment is mandatory for rejection
@@ -121,7 +122,7 @@ class RequestAggregate extends AggregateRoot
 
         $this->recordThat(new RequestRejected(
             requestId: $this->uuid(),
-            reviewedBy: auth()->user()->name ?? 'System',
+            reviewedBy: $reviewedBy, // FIXED: Now uses the parameter
             reviewedAt: now()->toISOString(),
             comment: trim($comment),
         ));
@@ -208,7 +209,7 @@ class RequestAggregate extends AggregateRoot
 
         foreach ($requiredFields as $field) {
             if (!isset($proposedData[$field]) || empty(trim($proposedData[$field]))) {
-                throw new \InvalidArgumentException("Field '{$field}' is required for plant creation");
+                throw new InvalidArgumentException("Field '{$field}' is required for plant creation");
             }
         }
 
@@ -234,7 +235,7 @@ class RequestAggregate extends AggregateRoot
         $unknownFields = array_diff(array_keys($proposedData), $allowedFields);
 
         if (!empty($unknownFields)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Unknown fields in proposed data: ' . implode(', ', $unknownFields)
             );
         }
@@ -243,7 +244,7 @@ class RequestAggregate extends AggregateRoot
     private function validateProposedChanges(array $proposedChanges): void
     {
         if (empty($proposedChanges)) {
-            throw new \InvalidArgumentException('Proposed changes cannot be empty');
+            throw new InvalidArgumentException('Proposed changes cannot be empty');
         }
 
         // Validate that we have valid fields to change
@@ -251,7 +252,7 @@ class RequestAggregate extends AggregateRoot
         $invalidFields = array_diff(array_keys($proposedChanges), $allowedFields);
 
         if (!empty($invalidFields)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Invalid fields in proposed changes: ' . implode(', ', $invalidFields)
             );
         }
@@ -277,12 +278,12 @@ class RequestAggregate extends AggregateRoot
     private function validatePlantId(string $plantId): void
     {
         if (empty(trim($plantId))) {
-            throw new \InvalidArgumentException('Plant ID cannot be empty');
+            throw new InvalidArgumentException('Plant ID cannot be empty');
         }
 
         // Validate UUID format
         if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $plantId)) {
-            throw new \InvalidArgumentException('Plant ID must be a valid UUID');
+            throw new InvalidArgumentException('Plant ID must be a valid UUID');
         }
     }
 
@@ -291,15 +292,15 @@ class RequestAggregate extends AggregateRoot
         $trimmedReason = trim($reason);
 
         if (empty($trimmedReason)) {
-            throw new \InvalidArgumentException('Reason cannot be empty');
+            throw new InvalidArgumentException('Reason cannot be empty');
         }
 
         if (strlen($trimmedReason) < 10) {
-            throw new \InvalidArgumentException('Reason must be at least 10 characters long');
+            throw new InvalidArgumentException('Reason must be at least 10 characters long');
         }
 
         if (strlen($trimmedReason) > 500) {
-            throw new \InvalidArgumentException('Reason cannot exceed 500 characters');
+            throw new InvalidArgumentException('Reason cannot exceed 500 characters');
         }
     }
 
@@ -308,11 +309,11 @@ class RequestAggregate extends AggregateRoot
         $trimmedName = trim($userName);
 
         if (empty($trimmedName)) {
-            throw new \InvalidArgumentException('User name cannot be empty');
+            throw new InvalidArgumentException('User name cannot be empty');
         }
 
         if (strlen($trimmedName) > 100) {
-            throw new \InvalidArgumentException('User name cannot exceed 100 characters');
+            throw new InvalidArgumentException('User name cannot exceed 100 characters');
         }
     }
 
@@ -321,11 +322,11 @@ class RequestAggregate extends AggregateRoot
         $trimmedComment = trim($comment);
 
         if ($mandatory && empty($trimmedComment)) {
-            throw new \InvalidArgumentException('Comment is required for rejection');
+            throw new InvalidArgumentException('Comment is required for rejection');
         }
 
         if (!empty($trimmedComment) && strlen($trimmedComment) > 1000) {
-            throw new \InvalidArgumentException('Comment cannot exceed 1000 characters');
+            throw new InvalidArgumentException('Comment cannot exceed 1000 characters');
         }
     }
 
@@ -335,19 +336,19 @@ class RequestAggregate extends AggregateRoot
         $trimmedName = trim($name);
 
         if (empty($trimmedName)) {
-            throw new \InvalidArgumentException('Plant name cannot be empty');
+            throw new InvalidArgumentException('Plant name cannot be empty');
         }
 
         if (strlen($trimmedName) < 2) {
-            throw new \InvalidArgumentException('Plant name must be at least 2 characters long');
+            throw new InvalidArgumentException('Plant name must be at least 2 characters long');
         }
 
         if (strlen($trimmedName) > 100) {
-            throw new \InvalidArgumentException('Plant name cannot exceed 100 characters');
+            throw new InvalidArgumentException('Plant name cannot exceed 100 characters');
         }
 
         if (!preg_match('/^[a-zA-ZäöüÄÖÜß0-9\s\-\'\.]+$/u', $trimmedName)) {
-            throw new \InvalidArgumentException('Plant name contains invalid characters');
+            throw new InvalidArgumentException('Plant name contains invalid characters');
         }
     }
 
@@ -356,7 +357,7 @@ class RequestAggregate extends AggregateRoot
         $validTypes = ['gemuese', 'obst', 'kraeuter', 'blumen', 'baeume', 'straeucher'];
 
         if (!in_array($type, $validTypes)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Invalid plant type. Allowed: ' . implode(', ', $validTypes)
             );
         }
@@ -365,7 +366,7 @@ class RequestAggregate extends AggregateRoot
     private function validateCategory(string $category): void
     {
         if (strlen(trim($category)) > 50) {
-            throw new \InvalidArgumentException('Category cannot exceed 50 characters');
+            throw new InvalidArgumentException('Category cannot exceed 50 characters');
         }
     }
 
@@ -374,11 +375,11 @@ class RequestAggregate extends AggregateRoot
         $trimmedLatinName = trim($latinName);
 
         if (strlen($trimmedLatinName) > 100) {
-            throw new \InvalidArgumentException('Latin name cannot exceed 100 characters');
+            throw new InvalidArgumentException('Latin name cannot exceed 100 characters');
         }
 
         if (!preg_match('/^[A-Z][a-z]+ [a-z]+/', $trimmedLatinName)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Latin name should follow "Genus species" format'
             );
         }
@@ -387,14 +388,14 @@ class RequestAggregate extends AggregateRoot
     private function validateImageUrl(string $imageUrl): void
     {
         if (!filter_var($imageUrl, FILTER_VALIDATE_URL)) {
-            throw new \InvalidArgumentException('Invalid image URL format');
+            throw new InvalidArgumentException('Invalid image URL format');
         }
 
         $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
         $extension = strtolower(pathinfo(parse_url($imageUrl, PHP_URL_PATH), PATHINFO_EXTENSION));
 
         if (!in_array($extension, $allowedExtensions)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Image URL must point to a valid image file'
             );
         }
@@ -403,7 +404,7 @@ class RequestAggregate extends AggregateRoot
     private function validateDescription(string $description): void
     {
         if (strlen(trim($description)) > 2000) {
-            throw new \InvalidArgumentException('Description cannot exceed 2000 characters');
+            throw new InvalidArgumentException('Description cannot exceed 2000 characters');
         }
     }
 
