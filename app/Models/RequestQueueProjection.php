@@ -2,11 +2,17 @@
 
 namespace App\Models;
 
+use Database\Factories\RequestQueueProjectionFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RequestQueueProjection extends Model
 {
+    /** @use HasFactory<RequestQueueProjectionFactory> */
+    use HasFactory, HasUuids;
+
     protected $table = 'request_queue_projections';
 
     protected $primaryKey = 'uuid';
@@ -34,6 +40,14 @@ class RequestQueueProjection extends Model
         'requested_at' => 'datetime',
         'reviewed_at' => 'datetime',
     ];
+
+    /**
+     * Get the columns that should receive a unique identifier.
+     */
+    public function uniqueIds(): array
+    {
+        return ['uuid'];
+    }
 
     /**
      * Get the plant that this request refers to (for update requests)

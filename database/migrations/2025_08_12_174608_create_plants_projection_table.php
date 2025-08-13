@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Plants Projection - Read Model für Performance
         Schema::create('plants', function (Blueprint $table) {
-            $table->string('uuid', 36)->primary()->comment('Plant aggregate UUID');
+            // Primary key using UUID
+            $table->uuid('uuid')->primary();
 
             // Current plant state (projected from events)
             $table->string('name')->comment('Current name of the plant');
-            $table->string('type')->comment('Current plant type (Gemüse, Blume, etc.)');
-            $table->string('category')->nullable()->comment('Current category (Wurzelgemüse, Kräuter, etc.)');
+            $table->string('type')->comment('Current plant type (gemuese, blume, etc.)');
+            $table->string('category')->nullable()->comment('Current category (wurzelgemuese, kraeuter, etc.)');
             $table->string('latin_name')->nullable()->comment('Current scientific name');
             $table->text('description')->nullable()->comment('Current description');
             $table->string('image_url')->nullable()->comment('Current image URL');
@@ -36,43 +36,12 @@ return new class extends Migration
             $table->timestamps();
 
             // Indexes for performance
-            $table->index('type', 'idx_plants_type');
-            $table->index('category', 'idx_plants_category');
-            $table->index(['type', 'category'], 'idx_plants_type_category');
-            $table->index('is_deleted', 'idx_plants_is_deleted');
-            $table->index('was_community_requested', 'idx_plants_community_requested');
-            $table->index('last_event_at', 'idx_plants_last_event');
-        });
-
-        // Plant Timeline Projection - für die schöne UI Timeline
-        Schema::create('plant_timeline_projections', function (Blueprint $table) {
-            $table->id();
-            $table->string('plant_uuid', 36)->comment('Plant aggregate UUID');
-
-            // Event data for timeline display
-            $table->string('event_type')->comment('requested, created, updated, update_requested, deleted, restored');
-            $table->string('performed_by')->comment('Username who performed this action');
-            $table->timestamp('performed_at')->comment('When this event occurred');
-            $table->json('event_details')->nullable()->comment('Details like changed_fields, etc.');
-            $table->text('display_text')->nullable()->comment('Human-readable text for UI');
-
-            // For ordering in timeline
-            $table->unsignedBigInteger('sequence_number')->comment('Order of events for this plant');
-
-            $table->timestamps();
-
-            // Foreign key to plants projection
-            $table->foreign('plant_uuid', 'fk_timeline_plant')
-                ->references('uuid')
-                ->on('plants')
-                ->onDelete('cascade');
-
-
-            // Indexes
-            $table->index('plant_uuid', 'idx_timeline_plant');
-            $table->index('event_type', 'idx_timeline_event_type');
-            $table->index(['plant_uuid', 'sequence_number'], 'idx_timeline_order');
-            $table->index('performed_at', 'idx_timeline_performed_at');
+            $table->index('type');
+            $table->index('category');
+            $table->index(['type', 'category']);
+            $table->index('is_deleted');
+            $table->index('was_community_requested');
+            $table->index('last_event_at');
         });
     }
 
@@ -81,7 +50,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('plant_timeline_projections');
         Schema::dropIfExists('plants');
     }
 };
