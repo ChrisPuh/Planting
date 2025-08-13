@@ -2,8 +2,8 @@
 
 namespace Tests;
 
-use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEvent;
 
 abstract class TestCase extends BaseTestCase
@@ -25,7 +25,7 @@ abstract class TestCase extends BaseTestCase
     protected function setupEventSourcing(): void
     {
         // Ensure the event sourcing service provider is loaded
-        if (!$this->app->bound('event-sourcing')) {
+        if (! $this->app->bound('event-sourcing')) {
             $this->app->register(\Spatie\EventSourcing\EventSourcingServiceProvider::class);
         }
 
@@ -56,9 +56,14 @@ abstract class TestCase extends BaseTestCase
 
         // Mock the auth helper
         $this->app->bind('auth', function () use ($user) {
-            return new class($user) {
+            return new class($user)
+            {
                 public function __construct(private $user) {}
-                public function user() { return $this->user; }
+
+                public function user()
+                {
+                    return $this->user;
+                }
             };
         });
     }
@@ -72,6 +77,7 @@ trait CreatesApplication
     {
         $app = require __DIR__.'/../bootstrap/app.php';
         $app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+
         return $app;
     }
 }

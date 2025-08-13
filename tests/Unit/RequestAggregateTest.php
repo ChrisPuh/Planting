@@ -4,9 +4,9 @@
 
 use App\Domains\PlantManagement\Aggregates\PlantAggregate;
 use App\Domains\PlantManagement\Events\PlantCreated;
-use App\Domains\PlantManagement\Events\PlantUpdated;
 use App\Domains\PlantManagement\Events\PlantDeleted;
 use App\Domains\PlantManagement\Events\PlantRestored;
+use App\Domains\PlantManagement\Events\PlantUpdated;
 
 describe('PlantAggregate - Pure Unit Tests', function () {
 
@@ -14,7 +14,7 @@ describe('PlantAggregate - Pure Unit Tests', function () {
 
         it('can create a plant with valid data', function () {
             // Arrange - create aggregate instance directly (no container)
-            $aggregate = new PlantAggregate();
+            $aggregate = new PlantAggregate;
 
             // Act
             $aggregate->createPlant(
@@ -43,7 +43,7 @@ describe('PlantAggregate - Pure Unit Tests', function () {
         });
 
         it('can create plant with default system user', function () {
-            $aggregate = new PlantAggregate();
+            $aggregate = new PlantAggregate;
 
             // Act - ohne createdBy Parameter = 'System' default
             $aggregate->createPlant('Test Plant', 'gemuese');
@@ -55,33 +55,33 @@ describe('PlantAggregate - Pure Unit Tests', function () {
         });
 
         it('validates required plant name', function () {
-            $aggregate = new PlantAggregate();
+            $aggregate = new PlantAggregate;
 
-            expect(fn() => $aggregate->createPlant('', 'gemuese'))
+            expect(fn () => $aggregate->createPlant('', 'gemuese'))
                 ->toThrow(InvalidArgumentException::class, 'Plant name cannot be empty');
         });
 
         it('validates plant name length', function () {
-            $aggregate = new PlantAggregate();
+            $aggregate = new PlantAggregate;
 
-            expect(fn() => $aggregate->createPlant('A', 'gemuese'))
+            expect(fn () => $aggregate->createPlant('A', 'gemuese'))
                 ->toThrow(InvalidArgumentException::class, 'Plant name must be at least 2 characters long');
 
-            expect(fn() => $aggregate->createPlant(str_repeat('A', 101), 'gemuese'))
+            expect(fn () => $aggregate->createPlant(str_repeat('A', 101), 'gemuese'))
                 ->toThrow(InvalidArgumentException::class, 'Plant name cannot exceed 100 characters');
         });
 
         it('validates plant type', function () {
-            $aggregate = new PlantAggregate();
+            $aggregate = new PlantAggregate;
 
-            expect(fn() => $aggregate->createPlant('Test Plant', 'invalid_type'))
+            expect(fn () => $aggregate->createPlant('Test Plant', 'invalid_type'))
                 ->toThrow(InvalidArgumentException::class, 'Invalid plant type');
         });
 
         it('validates latin name format', function () {
-            $aggregate = new PlantAggregate();
+            $aggregate = new PlantAggregate;
 
-            expect(fn() => $aggregate->createPlant(
+            expect(fn () => $aggregate->createPlant(
                 'Test Plant',
                 'gemuese',
                 latinName: 'invalid latin name'
@@ -89,9 +89,9 @@ describe('PlantAggregate - Pure Unit Tests', function () {
         });
 
         it('validates image URL', function () {
-            $aggregate = new PlantAggregate();
+            $aggregate = new PlantAggregate;
 
-            expect(fn() => $aggregate->createPlant(
+            expect(fn () => $aggregate->createPlant(
                 'Test Plant',
                 'gemuese',
                 imageUrl: 'not-a-url'
@@ -103,13 +103,13 @@ describe('PlantAggregate - Pure Unit Tests', function () {
 
         it('can update plant with valid changes', function () {
             // Arrange
-            $aggregate = new PlantAggregate();
+            $aggregate = new PlantAggregate;
             $aggregate->createPlant('Original Name', 'gemuese', createdBy: 'Creator');
 
             // Act
             $aggregate->updatePlant([
                 'name' => 'Updated Name',
-                'description' => 'New description'
+                'description' => 'New description',
             ], 'Admin User'); // Custom updater
 
             // Assert
@@ -120,37 +120,37 @@ describe('PlantAggregate - Pure Unit Tests', function () {
             expect($updateEvent)->toBeInstanceOf(PlantUpdated::class)
                 ->and($updateEvent->changes)->toBe([
                     'name' => 'Updated Name',
-                    'description' => 'New description'
+                    'description' => 'New description',
                 ])
                 ->and($updateEvent->updatedBy)->toBe('Admin User');
         });
 
         it('prevents updating deleted plants', function () {
             // Arrange
-            $aggregate = new PlantAggregate();
+            $aggregate = new PlantAggregate;
             $aggregate->createPlant('Test Plant', 'gemuese');
             $aggregate->deletePlant(); // Uses default 'System'
 
             // Act & Assert
-            expect(fn() => $aggregate->updatePlant(['name' => 'New Name']))
+            expect(fn () => $aggregate->updatePlant(['name' => 'New Name']))
                 ->toThrow(DomainException::class, 'Cannot update deleted plant');
         });
 
         it('validates update fields', function () {
-            $aggregate = new PlantAggregate();
+            $aggregate = new PlantAggregate;
             $aggregate->createPlant('Test Plant', 'gemuese');
 
-            expect(fn() => $aggregate->updatePlant(['invalid_field' => 'value']))
+            expect(fn () => $aggregate->updatePlant(['invalid_field' => 'value']))
                 ->toThrow(InvalidArgumentException::class, 'Invalid fields in update');
         });
 
         it('filters out non-changes', function () {
             // Arrange
-            $aggregate = new PlantAggregate();
+            $aggregate = new PlantAggregate;
             $aggregate->createPlant('Test Plant', 'gemuese');
 
             // Act & Assert - trying to "update" with same values
-            expect(fn() => $aggregate->updatePlant(['name' => 'Test Plant']))
+            expect(fn () => $aggregate->updatePlant(['name' => 'Test Plant']))
                 ->toThrow(DomainException::class, 'No actual changes detected');
         });
     });
@@ -159,7 +159,7 @@ describe('PlantAggregate - Pure Unit Tests', function () {
 
         it('can delete a plant', function () {
             // Arrange
-            $aggregate = new PlantAggregate();
+            $aggregate = new PlantAggregate;
             $aggregate->createPlant('Test Plant', 'gemuese');
 
             // Act
@@ -176,17 +176,17 @@ describe('PlantAggregate - Pure Unit Tests', function () {
         });
 
         it('prevents deleting already deleted plants', function () {
-            $aggregate = new PlantAggregate();
+            $aggregate = new PlantAggregate;
             $aggregate->createPlant('Test Plant', 'gemuese');
             $aggregate->deletePlant(); // Uses default 'System'
 
-            expect(fn() => $aggregate->deletePlant())
+            expect(fn () => $aggregate->deletePlant())
                 ->toThrow(DomainException::class, 'Plant is already deleted');
         });
 
         it('can restore deleted plants', function () {
             // Arrange
-            $aggregate = new PlantAggregate();
+            $aggregate = new PlantAggregate;
             $aggregate->createPlant('Test Plant', 'gemuese');
             $aggregate->deletePlant();
 
@@ -203,10 +203,10 @@ describe('PlantAggregate - Pure Unit Tests', function () {
         });
 
         it('prevents restoring non-deleted plants', function () {
-            $aggregate = new PlantAggregate();
+            $aggregate = new PlantAggregate;
             $aggregate->createPlant('Test Plant', 'gemuese');
 
-            expect(fn() => $aggregate->restorePlant())
+            expect(fn () => $aggregate->restorePlant())
                 ->toThrow(DomainException::class, 'Plant is not deleted and cannot be restored');
         });
     });
@@ -215,7 +215,7 @@ describe('PlantAggregate - Pure Unit Tests', function () {
 
         it('rebuilds state correctly from events', function () {
             // Arrange - create aggregate and apply events manually
-            $aggregate = new PlantAggregate();
+            $aggregate = new PlantAggregate;
 
             // Apply events in sequence to test state reconstruction
             $aggregate->applyPlantCreated(new PlantCreated(
@@ -261,7 +261,7 @@ describe('PlantAggregate - Pure Unit Tests', function () {
     describe('business logic validation', function () {
 
         it('enforces business rules consistently', function () {
-            $aggregate = new PlantAggregate();
+            $aggregate = new PlantAggregate;
 
             // Test 1: Can create valid plant
             $aggregate->createPlant('Valid Plant', 'gemuese', createdBy: 'Creator');
@@ -275,7 +275,7 @@ describe('PlantAggregate - Pure Unit Tests', function () {
             $aggregate->deletePlant('First deletion', 'Deleter');
             expect($aggregate->isDeleted())->toBeTrue();
 
-            expect(fn() => $aggregate->deletePlant())
+            expect(fn () => $aggregate->deletePlant())
                 ->toThrow(DomainException::class, 'Plant is already deleted');
         });
 
@@ -283,7 +283,7 @@ describe('PlantAggregate - Pure Unit Tests', function () {
             $validTypes = ['gemuese', 'obst', 'kraeuter', 'blumen', 'baeume', 'straeucher'];
 
             foreach ($validTypes as $type) {
-                $aggregate = new PlantAggregate();
+                $aggregate = new PlantAggregate;
 
                 // Should not throw exception
                 $aggregate->createPlant("Test {$type}", $type);
@@ -307,13 +307,13 @@ describe('RequestAggregate - Pure Unit Tests', function () {
 
         it('can submit plant creation request with valid data', function () {
             // Arrange
-            $aggregate = new RequestAggregate();
+            $aggregate = new RequestAggregate;
 
             $proposedData = [
                 'name' => 'Requested Plant',
                 'type' => 'gemuese',
                 'category' => 'Test Category',
-                'description' => 'User requested plant'
+                'description' => 'User requested plant',
             ];
 
             // Act
@@ -335,9 +335,9 @@ describe('RequestAggregate - Pure Unit Tests', function () {
         });
 
         it('validates required fields in proposed data', function () {
-            $aggregate = new RequestAggregate();
+            $aggregate = new RequestAggregate;
 
-            expect(fn() => $aggregate->submitPlantCreationRequest(
+            expect(fn () => $aggregate->submitPlantCreationRequest(
                 proposedData: ['type' => 'gemuese'], // missing name
                 reason: 'Valid reason that is long enough',
                 requestedBy: 'John Doe'
@@ -345,9 +345,9 @@ describe('RequestAggregate - Pure Unit Tests', function () {
         });
 
         it('validates reason length', function () {
-            $aggregate = new RequestAggregate();
+            $aggregate = new RequestAggregate;
 
-            expect(fn() => $aggregate->submitPlantCreationRequest(
+            expect(fn () => $aggregate->submitPlantCreationRequest(
                 proposedData: ['name' => 'Test', 'type' => 'gemuese'],
                 reason: 'Too short', // less than 10 characters
                 requestedBy: 'John Doe'
@@ -355,12 +355,12 @@ describe('RequestAggregate - Pure Unit Tests', function () {
         });
 
         it('validates proposed plant data fields', function () {
-            $aggregate = new RequestAggregate();
+            $aggregate = new RequestAggregate;
 
-            expect(fn() => $aggregate->submitPlantCreationRequest(
+            expect(fn () => $aggregate->submitPlantCreationRequest(
                 proposedData: [
                     'name' => 'Test',
-                    'type' => 'invalid_type'
+                    'type' => 'invalid_type',
                 ],
                 reason: 'Valid reason that is long enough',
                 requestedBy: 'John Doe'
@@ -372,11 +372,11 @@ describe('RequestAggregate - Pure Unit Tests', function () {
 
         it('can submit update request with valid changes', function () {
             // Arrange
-            $aggregate = new RequestAggregate();
+            $aggregate = new RequestAggregate;
 
             $proposedChanges = [
                 'description' => 'Updated description',
-                'latin_name' => 'Updatus plantus'
+                'latin_name' => 'Updatus plantus',
             ];
 
             // Act
@@ -399,9 +399,9 @@ describe('RequestAggregate - Pure Unit Tests', function () {
         });
 
         it('validates plant ID format', function () {
-            $aggregate = new RequestAggregate();
+            $aggregate = new RequestAggregate;
 
-            expect(fn() => $aggregate->submitUpdateRequest(
+            expect(fn () => $aggregate->submitUpdateRequest(
                 plantId: 'invalid-uuid',
                 proposedChanges: ['description' => 'test'],
                 reason: 'Valid reason that is long enough',
@@ -410,9 +410,9 @@ describe('RequestAggregate - Pure Unit Tests', function () {
         });
 
         it('validates proposed changes are not empty', function () {
-            $aggregate = new RequestAggregate();
+            $aggregate = new RequestAggregate;
 
-            expect(fn() => $aggregate->submitUpdateRequest(
+            expect(fn () => $aggregate->submitUpdateRequest(
                 plantId: '12345678-1234-1234-1234-123456789012',
                 proposedChanges: [],
                 reason: 'Valid reason that is long enough',
@@ -425,7 +425,7 @@ describe('RequestAggregate - Pure Unit Tests', function () {
 
         it('can approve pending requests', function () {
             // Arrange
-            $aggregate = new RequestAggregate();
+            $aggregate = new RequestAggregate;
             $aggregate->submitPlantCreationRequest(
                 proposedData: ['name' => 'Test', 'type' => 'gemuese'],
                 reason: 'Valid reason that is long enough',
@@ -447,7 +447,7 @@ describe('RequestAggregate - Pure Unit Tests', function () {
 
         it('can reject pending requests', function () {
             // Arrange
-            $aggregate = new RequestAggregate();
+            $aggregate = new RequestAggregate;
             $aggregate->submitPlantCreationRequest(
                 proposedData: ['name' => 'Test', 'type' => 'gemuese'],
                 reason: 'Valid reason that is long enough',
@@ -468,7 +468,7 @@ describe('RequestAggregate - Pure Unit Tests', function () {
         });
 
         it('prevents approving non-pending requests', function () {
-            $aggregate = new RequestAggregate();
+            $aggregate = new RequestAggregate;
             $aggregate->submitPlantCreationRequest(
                 proposedData: ['name' => 'Test', 'type' => 'gemuese'],
                 reason: 'Valid reason that is long enough',
@@ -476,12 +476,12 @@ describe('RequestAggregate - Pure Unit Tests', function () {
             );
             $aggregate->approve(); // Uses default 'System'
 
-            expect(fn() => $aggregate->approve())
+            expect(fn () => $aggregate->approve())
                 ->toThrow(DomainException::class, 'Only pending requests can be approved');
         });
 
         it('prevents rejecting non-pending requests', function () {
-            $aggregate = new RequestAggregate();
+            $aggregate = new RequestAggregate;
             $aggregate->submitPlantCreationRequest(
                 proposedData: ['name' => 'Test', 'type' => 'gemuese'],
                 reason: 'Valid reason that is long enough',
@@ -489,19 +489,19 @@ describe('RequestAggregate - Pure Unit Tests', function () {
             );
             $aggregate->reject('Not suitable'); // Uses default 'System'
 
-            expect(fn() => $aggregate->reject('Another reason'))
+            expect(fn () => $aggregate->reject('Another reason'))
                 ->toThrow(DomainException::class, 'Only pending requests can be rejected');
         });
 
         it('requires comment for rejection', function () {
-            $aggregate = new RequestAggregate();
+            $aggregate = new RequestAggregate;
             $aggregate->submitPlantCreationRequest(
                 proposedData: ['name' => 'Test', 'type' => 'gemuese'],
                 reason: 'Valid reason that is long enough',
                 requestedBy: 'John Doe'
             );
 
-            expect(fn() => $aggregate->reject(''))
+            expect(fn () => $aggregate->reject(''))
                 ->toThrow(InvalidArgumentException::class, 'Comment is required for rejection');
         });
     });
@@ -510,7 +510,7 @@ describe('RequestAggregate - Pure Unit Tests', function () {
 
         it('rebuilds state correctly from creation request events', function () {
             // Arrange
-            $aggregate = new RequestAggregate();
+            $aggregate = new RequestAggregate;
 
             // Apply events manually to test state reconstruction
             $aggregate->applyPlantCreationRequested(new PlantCreationRequested(
@@ -543,7 +543,7 @@ describe('RequestAggregate - Pure Unit Tests', function () {
 
         it('rebuilds state correctly from update request events', function () {
             // Arrange
-            $aggregate = new RequestAggregate();
+            $aggregate = new RequestAggregate;
 
             // Apply events manually
             $aggregate->applyPlantUpdateRequested(new PlantUpdateRequested(
@@ -575,7 +575,7 @@ describe('RequestAggregate - Pure Unit Tests', function () {
     describe('business rules', function () {
 
         it('can check if request can be modified', function () {
-            $aggregate = new RequestAggregate();
+            $aggregate = new RequestAggregate;
             // Initially cannot be modified (no events yet)
             expect($aggregate->canBeModified())->toBeTrue(); // ✅ Status ist 'pending' = modifiable
 
@@ -593,7 +593,7 @@ describe('RequestAggregate - Pure Unit Tests', function () {
         });
 
         it('can check if request is ready for review', function () {
-            $aggregate = new RequestAggregate();
+            $aggregate = new RequestAggregate;
 
             expect($aggregate->isReadyForReview())->toBeFalse();
 

@@ -3,23 +3,32 @@
 namespace App\Domains\PlantManagement\Aggregates;
 
 use App\Domains\PlantManagement\Events\PlantCreated;
-use App\Domains\PlantManagement\Events\PlantUpdated;
 use App\Domains\PlantManagement\Events\PlantDeleted;
 use App\Domains\PlantManagement\Events\PlantRestored;
+use App\Domains\PlantManagement\Events\PlantUpdated;
 use Spatie\EventSourcing\AggregateRoots\AggregateRoot;
 
 class PlantAggregate extends AggregateRoot
 {
     // Aggregate state properties
     private string $name = '';
+
     private string $type = '';
+
     private ?string $category = null;
+
     private ?string $latinName = null;
+
     private ?string $description = null;
+
     private ?string $imageUrl = null;
+
     private bool $isDeleted = false;
+
     private bool $wasUserRequested = false;
+
     private string $createdBy = '';
+
     private ?string $lastUpdatedBy = null;
 
     /**
@@ -81,9 +90,9 @@ class PlantAggregate extends AggregateRoot
         $allowedFields = ['name', 'type', 'category', 'latin_name', 'description', 'image_url'];
         $invalidFields = array_diff(array_keys($changes), $allowedFields);
 
-        if (!empty($invalidFields)) {
+        if (! empty($invalidFields)) {
             throw new \InvalidArgumentException(
-                'Invalid fields in update: ' . implode(', ', $invalidFields)
+                'Invalid fields in update: '.implode(', ', $invalidFields)
             );
         }
 
@@ -119,7 +128,7 @@ class PlantAggregate extends AggregateRoot
             plantId: $this->uuid(),
             changes: $filteredChanges,
             updatedBy: $updatedBy, // FIXED: Now uses the parameter
-            //TODO now()->toISOString(), sollte als string übergeben werden
+            // TODO now()->toISOString(), sollte als string übergeben werden
             updatedAt: now()->toISOString(),
         ));
 
@@ -138,7 +147,7 @@ class PlantAggregate extends AggregateRoot
         $this->recordThat(new PlantDeleted(
             plantId: $this->uuid(),
             deletedBy: $deletedBy, // FIXED: Now uses the parameter
-            //TODO now()->toISOString(), sollte als string übergeben werden
+            // TODO now()->toISOString(), sollte als string übergeben werden
             deletedAt: now()->toISOString(),
             reason: $reason,
         ));
@@ -151,7 +160,7 @@ class PlantAggregate extends AggregateRoot
      */
     public function restorePlant(string $restoredBy = 'System'): self
     {
-        if (!$this->isDeleted) {
+        if (! $this->isDeleted) {
             throw new \DomainException('Plant is not deleted and cannot be restored');
         }
 
@@ -238,7 +247,7 @@ class PlantAggregate extends AggregateRoot
         }
 
         // Check for invalid characters (only letters, numbers, spaces, hyphens, apostrophes)
-        if (!preg_match('/^[a-zA-ZäöüÄÖÜß0-9\s\-\'\.]+$/u', $trimmedName)) {
+        if (! preg_match('/^[a-zA-ZäöüÄÖÜß0-9\s\-\'\.]+$/u', $trimmedName)) {
             throw new \InvalidArgumentException('Plant name contains invalid characters');
         }
     }
@@ -247,9 +256,9 @@ class PlantAggregate extends AggregateRoot
     {
         $validTypes = ['gemuese', 'obst', 'kraeuter', 'blumen', 'baeume', 'straeucher'];
 
-        if (!in_array($type, $validTypes)) {
+        if (! in_array($type, $validTypes)) {
             throw new \InvalidArgumentException(
-                'Invalid plant type. Allowed: ' . implode(', ', $validTypes)
+                'Invalid plant type. Allowed: '.implode(', ', $validTypes)
             );
         }
     }
@@ -280,7 +289,7 @@ class PlantAggregate extends AggregateRoot
         }
 
         // Basic validation for latin names (Genus species format)
-        if (!preg_match('/^[A-Z][a-z]+ [a-z]+/', $trimmedLatinName)) {
+        if (! preg_match('/^[A-Z][a-z]+ [a-z]+/', $trimmedLatinName)) {
             throw new \InvalidArgumentException(
                 'Latin name should follow "Genus species" format (e.g., "Solanum lycopersicum")'
             );
@@ -293,7 +302,7 @@ class PlantAggregate extends AggregateRoot
             return;
         }
 
-        if (!filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+        if (! filter_var($imageUrl, FILTER_VALIDATE_URL)) {
             throw new \InvalidArgumentException('Invalid image URL format');
         }
 
@@ -301,7 +310,7 @@ class PlantAggregate extends AggregateRoot
         $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
         $extension = strtolower(pathinfo(parse_url($imageUrl, PHP_URL_PATH), PATHINFO_EXTENSION));
 
-        if (!in_array($extension, $allowedExtensions)) {
+        if (! in_array($extension, $allowedExtensions)) {
             throw new \InvalidArgumentException(
                 'Image URL must point to a valid image file (.jpg, .jpeg, .png, .gif, .webp)'
             );

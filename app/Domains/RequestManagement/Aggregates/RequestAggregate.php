@@ -15,25 +15,33 @@ class RequestAggregate extends AggregateRoot
 {
     // Aggregate state properties
     private string $status = 'pending';
+
     private string $requestType = '';
+
     private string $requestedBy = '';
+
     private ?string $plantId = null;
+
     private array $proposedData = [];
+
     private string $reason = '';
+
     private ?string $reviewedBy = null;
+
     private ?string $reviewComment = null;
+
     private string $requestedAt = '';
+
     private ?string $reviewedAt = null;
 
     /**
      * Submit a request for creating a new plant
      */
     public function submitPlantCreationRequest(
-        array  $proposedData,
+        array $proposedData,
         string $reason,
         string $requestedBy
-    ): self
-    {
+    ): self {
         // Validate request data
         $this->validateProposedPlantData($proposedData);
         $this->validateReason($reason);
@@ -59,11 +67,10 @@ class RequestAggregate extends AggregateRoot
      */
     public function submitUpdateRequest(
         string $plantId,
-        array  $proposedChanges,
+        array $proposedChanges,
         string $reason,
         string $requestedBy
-    ): self
-    {
+    ): self {
         // Validate inputs
         $this->validatePlantId($plantId);
         $this->validateProposedChanges($proposedChanges);
@@ -144,8 +151,8 @@ class RequestAggregate extends AggregateRoot
     public function isReadyForReview(): bool
     {
         return $this->status === 'pending' &&
-            !empty($this->proposedData) &&
-            !empty($this->reason);
+            ! empty($this->proposedData) &&
+            ! empty($this->reason);
     }
 
     // ===== Event Handlers for State Reconstruction =====
@@ -208,7 +215,7 @@ class RequestAggregate extends AggregateRoot
         $requiredFields = ['name', 'type'];
 
         foreach ($requiredFields as $field) {
-            if (!isset($proposedData[$field]) || empty(trim($proposedData[$field]))) {
+            if (! isset($proposedData[$field]) || empty(trim($proposedData[$field]))) {
                 throw new InvalidArgumentException("Field '{$field}' is required for plant creation");
             }
         }
@@ -218,15 +225,15 @@ class RequestAggregate extends AggregateRoot
         $this->validatePlantType($proposedData['type']);
 
         // Optional fields validation
-        if (isset($proposedData['category']) && !empty($proposedData['category'])) {
+        if (isset($proposedData['category']) && ! empty($proposedData['category'])) {
             $this->validateCategory($proposedData['category']);
         }
 
-        if (isset($proposedData['latin_name']) && !empty($proposedData['latin_name'])) {
+        if (isset($proposedData['latin_name']) && ! empty($proposedData['latin_name'])) {
             $this->validateLatinName($proposedData['latin_name']);
         }
 
-        if (isset($proposedData['image_url']) && !empty($proposedData['image_url'])) {
+        if (isset($proposedData['image_url']) && ! empty($proposedData['image_url'])) {
             $this->validateImageUrl($proposedData['image_url']);
         }
 
@@ -234,9 +241,9 @@ class RequestAggregate extends AggregateRoot
         $allowedFields = ['name', 'type', 'category', 'latin_name', 'description', 'image_url'];
         $unknownFields = array_diff(array_keys($proposedData), $allowedFields);
 
-        if (!empty($unknownFields)) {
+        if (! empty($unknownFields)) {
             throw new InvalidArgumentException(
-                'Unknown fields in proposed data: ' . implode(', ', $unknownFields)
+                'Unknown fields in proposed data: '.implode(', ', $unknownFields)
             );
         }
     }
@@ -251,9 +258,9 @@ class RequestAggregate extends AggregateRoot
         $allowedFields = ['name', 'type', 'category', 'latin_name', 'description', 'image_url'];
         $invalidFields = array_diff(array_keys($proposedChanges), $allowedFields);
 
-        if (!empty($invalidFields)) {
+        if (! empty($invalidFields)) {
             throw new InvalidArgumentException(
-                'Invalid fields in proposed changes: ' . implode(', ', $invalidFields)
+                'Invalid fields in proposed changes: '.implode(', ', $invalidFields)
             );
         }
 
@@ -282,7 +289,7 @@ class RequestAggregate extends AggregateRoot
         }
 
         // Validate UUID format
-        if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $plantId)) {
+        if (! preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $plantId)) {
             throw new InvalidArgumentException('Plant ID must be a valid UUID');
         }
     }
@@ -325,7 +332,7 @@ class RequestAggregate extends AggregateRoot
             throw new InvalidArgumentException('Comment is required for rejection');
         }
 
-        if (!empty($trimmedComment) && strlen($trimmedComment) > 1000) {
+        if (! empty($trimmedComment) && strlen($trimmedComment) > 1000) {
             throw new InvalidArgumentException('Comment cannot exceed 1000 characters');
         }
     }
@@ -347,7 +354,7 @@ class RequestAggregate extends AggregateRoot
             throw new InvalidArgumentException('Plant name cannot exceed 100 characters');
         }
 
-        if (!preg_match('/^[a-zA-ZäöüÄÖÜß0-9\s\-\'\.]+$/u', $trimmedName)) {
+        if (! preg_match('/^[a-zA-ZäöüÄÖÜß0-9\s\-\'\.]+$/u', $trimmedName)) {
             throw new InvalidArgumentException('Plant name contains invalid characters');
         }
     }
@@ -356,9 +363,9 @@ class RequestAggregate extends AggregateRoot
     {
         $validTypes = ['gemuese', 'obst', 'kraeuter', 'blumen', 'baeume', 'straeucher'];
 
-        if (!in_array($type, $validTypes)) {
+        if (! in_array($type, $validTypes)) {
             throw new InvalidArgumentException(
-                'Invalid plant type. Allowed: ' . implode(', ', $validTypes)
+                'Invalid plant type. Allowed: '.implode(', ', $validTypes)
             );
         }
     }
@@ -378,7 +385,7 @@ class RequestAggregate extends AggregateRoot
             throw new InvalidArgumentException('Latin name cannot exceed 100 characters');
         }
 
-        if (!preg_match('/^[A-Z][a-z]+ [a-z]+/', $trimmedLatinName)) {
+        if (! preg_match('/^[A-Z][a-z]+ [a-z]+/', $trimmedLatinName)) {
             throw new InvalidArgumentException(
                 'Latin name should follow "Genus species" format'
             );
@@ -387,14 +394,14 @@ class RequestAggregate extends AggregateRoot
 
     private function validateImageUrl(string $imageUrl): void
     {
-        if (!filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+        if (! filter_var($imageUrl, FILTER_VALIDATE_URL)) {
             throw new InvalidArgumentException('Invalid image URL format');
         }
 
         $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
         $extension = strtolower(pathinfo(parse_url($imageUrl, PHP_URL_PATH), PATHINFO_EXTENSION));
 
-        if (!in_array($extension, $allowedExtensions)) {
+        if (! in_array($extension, $allowedExtensions)) {
             throw new InvalidArgumentException(
                 'Image URL must point to a valid image file'
             );
