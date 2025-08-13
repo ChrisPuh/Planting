@@ -6,12 +6,10 @@ readonly class PlantAvatar
 {
     public function __construct(
         public ?string $src,
-        public string  $alt,
-        public string  $initials,
-        public string  $size,
-    )
-    {
-    }
+        public string $alt,
+        public string $initials,
+        public string $size,
+    ) {}
 
     public static function create(?string $src, string $alt, string $initials, string $size): self
     {

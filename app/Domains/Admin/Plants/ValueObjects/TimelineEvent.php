@@ -1,23 +1,22 @@
 <?php
 
 // App\Domains\Admin\Plants\ValueObjects\TimelineEvent.php
+
 namespace App\Domains\Admin\Plants\ValueObjects;
 
 readonly class TimelineEvent
 {
     public function __construct(
-        public string  $type,           // 'requested', 'created', 'updated', 'update_requested', 'deleted', 'restored'
-        public string  $label,          // "Pflanze beantragt", "Erstellt", etc.
+        public string $type,           // 'requested', 'created', 'updated', 'update_requested', 'deleted', 'restored'
+        public string $label,          // "Pflanze beantragt", "Erstellt", etc.
         public ?string $by,
         public ?string $at,
-        public bool    $showBy,
-        public string  $colorClass,
-        public string  $iconName,
-        public string  $iconColor,
-        public ?array  $details = null, // Zusätzliche Details (z.B. welche Felder geändert)
-    )
-    {
-    }
+        public bool $showBy,
+        public string $colorClass,
+        public string $iconName,
+        public string $iconColor,
+        public ?array $details = null, // Zusätzliche Details (z.B. welche Felder geändert)
+    ) {}
 
     public static function requested(?string $by, ?string $at, bool $showBy): self
     {

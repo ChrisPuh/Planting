@@ -10,12 +10,11 @@ class PlantDetailsViewModel
     use HasSectionInfo;
 
     public function __construct(
-        public readonly ?string  $category = null,
-        public readonly ?string  $latinName = null,
-        public readonly ?string  $description = null,
+        public readonly ?string $category = null,
+        public readonly ?string $latinName = null,
+        public readonly ?string $description = null,
         private readonly ?string $plantId = null, // ← Flexibel für UUID oder ID
-    )
-    {
+    ) {
         $this->sectionTitle = 'Details';
         $this->sectionPartial = 'partials.plants.show.details';
         $this->variableName = 'details';

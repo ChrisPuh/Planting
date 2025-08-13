@@ -1,19 +1,20 @@
 <?php
 
 // App\Domains\Admin\Plants\Services\PlantService.php - Updated
+
 namespace App\Domains\Admin\Plants\Services;
 
-use App\Domains\Admin\Plants\ViewModels\Show\PlantViewModel;
-use App\Domains\Admin\Plants\Mappers\PlantViewModelMapper;
-use App\Domains\Admin\Plants\Mappers\PlantTimelineMapper;
 use App\Domains\Admin\Plants\Contracts\PlantRepositoryInterface;
+use App\Domains\Admin\Plants\Mappers\PlantTimelineMapper;
+use App\Domains\Admin\Plants\Mappers\PlantViewModelMapper;
+use App\Domains\Admin\Plants\ViewModels\Show\PlantViewModel;
 
 readonly class PlantService
 {
     public function __construct(
         private PlantRepositoryInterface $repository,
-        private PlantViewModelMapper     $viewModelMapper,
-        private PlantTimelineMapper      $timelineMapper,
+        private PlantViewModelMapper $viewModelMapper,
+        private PlantTimelineMapper $timelineMapper,
     ) {}
 
     public function getPlantForShow(string $plantUuid): PlantViewModel
@@ -43,7 +44,7 @@ readonly class PlantService
     {
         $plants = $this->repository->getAll($filters);
 
-        return array_map(function($plant) {
+        return array_map(function ($plant) {
             // Für Index brauchen wir eine einfachere Version
             return $this->viewModelMapper->toIndexViewModel($plant);
         }, $plants);
@@ -57,7 +58,7 @@ readonly class PlantService
             'kraeuter' => 'Kräuter',
             'blume' => 'Blumen',
             'strauch' => 'Sträucher',
-            'baum' => 'Bäume'
+            'baum' => 'Bäume',
         ];
     }
 

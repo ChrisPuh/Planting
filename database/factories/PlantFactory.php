@@ -1,6 +1,7 @@
 <?php
 
 // database/factories/PlantFactory.php
+
 namespace Database\Factories;
 
 use App\Models\Plant;
@@ -57,7 +58,7 @@ class PlantFactory extends Factory
         'GartenProfi_Max', 'BlumenLiebhaberin_Anna', 'Kräuter_Klaus', 'Gemüse_Greta',
         'PflanzenfanTom', 'BioBauer_Ben', 'HobbygärtnerLisa', 'Botaniker_Bob',
         'GrünerDaumen_Gabi', 'Pflanzenflüsterer_Paul', 'Admin_User', 'Community_Helper',
-        'Garten_Experte', 'Pflanzendoktor_Petra', 'Seedling_Sam'
+        'Garten_Experte', 'Pflanzendoktor_Petra', 'Seedling_Sam',
     ];
 
     public function definition(): array
@@ -83,6 +84,7 @@ class PlantFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             $vegetable = $this->faker->randomElement(self::$vegetables);
+
             return [
                 'name' => $vegetable['name'],
                 'type' => 'gemuese',
@@ -97,6 +99,7 @@ class PlantFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             $herb = $this->faker->randomElement(self::$herbs);
+
             return [
                 'name' => $herb['name'],
                 'type' => 'kraeuter',
@@ -111,6 +114,7 @@ class PlantFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             $flower = $this->faker->randomElement(self::$flowers);
+
             return [
                 'name' => $flower['name'],
                 'type' => 'blume',
@@ -177,22 +181,22 @@ class PlantFactory extends Factory
     {
         $descriptions = [
             'gemuese' => [
-                "ist ein beliebtes Gemüse, das reich an Vitaminen und Mineralien ist.",
-                "wird häufig in der Küche verwendet und ist sehr gesund.",
-                "ist ein nahrhaftes Gemüse, das in vielen Gärten angebaut wird.",
-                "eignet sich hervorragend für den Anbau im eigenen Garten.",
+                'ist ein beliebtes Gemüse, das reich an Vitaminen und Mineralien ist.',
+                'wird häufig in der Küche verwendet und ist sehr gesund.',
+                'ist ein nahrhaftes Gemüse, das in vielen Gärten angebaut wird.',
+                'eignet sich hervorragend für den Anbau im eigenen Garten.',
             ],
             'kraut' => [
-                "ist ein aromatisches Kraut, das häufig in der Küche verwendet wird.",
-                "hat einen charakteristischen Geschmack und wird gerne zum Würzen verwendet.",
-                "ist ein beliebtes Küchenkraut mit vielen gesundheitlichen Vorteilen.",
-                "verleiht Gerichten einen besonderen Geschmack.",
+                'ist ein aromatisches Kraut, das häufig in der Küche verwendet wird.',
+                'hat einen charakteristischen Geschmack und wird gerne zum Würzen verwendet.',
+                'ist ein beliebtes Küchenkraut mit vielen gesundheitlichen Vorteilen.',
+                'verleiht Gerichten einen besonderen Geschmack.',
             ],
             'blume' => [
-                "ist eine wunderschöne Blume, die jeden Garten verschönert.",
-                "blüht in prächtigen Farben und ist bei Gärtnern sehr beliebt.",
-                "ist eine attraktive Blume, die Bienen und Schmetterlinge anzieht.",
-                "eignet sich perfekt für Blumenbeete und als Schnittblume.",
+                'ist eine wunderschöne Blume, die jeden Garten verschönert.',
+                'blüht in prächtigen Farben und ist bei Gärtnern sehr beliebt.',
+                'ist eine attraktive Blume, die Bienen und Schmetterlinge anzieht.',
+                'eignet sich perfekt für Blumenbeete und als Schnittblume.',
             ],
         ];
 
@@ -205,6 +209,6 @@ class PlantFactory extends Factory
 
         $description = $this->faker->randomElement($descriptions[$typeKey]);
 
-        return "{$plantName} {$description} " . $this->faker->sentence();
+        return "{$plantName} {$description} ".$this->faker->sentence();
     }
 }

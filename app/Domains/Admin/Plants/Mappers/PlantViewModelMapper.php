@@ -1,10 +1,11 @@
 <?php
 
 // App\Domains\Admin\Plants\Mappers\PlantViewModelMapper.php - Updated
+
 namespace App\Domains\Admin\Plants\Mappers;
 
-use App\Domains\Admin\Plants\ViewModels\Show\PlantViewModel;
 use App\Domains\Admin\Plants\ValueObjects\TimelineEvent;
+use App\Domains\Admin\Plants\ViewModels\Show\PlantViewModel;
 
 class PlantViewModelMapper
 {
@@ -99,7 +100,7 @@ class PlantViewModelMapper
         }
 
         // Fallback auf Plant-Daten falls Timeline leer
-        if (!$metadata['created_at'] && isset($plantData['created_at'])) {
+        if (! $metadata['created_at'] && isset($plantData['created_at'])) {
             $metadata['created_by'] = $plantData['created_by'];
             $metadata['created_at'] = $plantData['created_at'];
         }
@@ -109,7 +110,7 @@ class PlantViewModelMapper
 
     private function mapTypeToDisplay(string $type): string
     {
-        return match($type) {
+        return match ($type) {
             'gemuese' => 'Gemüse',
             'kraeuter' => 'Kräuter',
             'blume' => 'Blumen',

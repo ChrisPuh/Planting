@@ -5,13 +5,12 @@ namespace App\Domains\Admin\Plants\ViewModels\Show;
 use App\Domains\Admin\Plants\ValueObjects\PlantMetadataItem;
 use App\Domains\Admin\Plants\ValueObjects\TimelineEvent;
 use App\Domains\Admin\Plants\ViewModels\Show\Concerns\HasSectionInfo;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 class PlantMetadataViewModel
 {
     use HasSectionInfo;
-
 
     public function __construct(
         public readonly ?string $requestedBy = null,
@@ -22,16 +21,13 @@ class PlantMetadataViewModel
         public readonly ?string $updatedAt = null,
         public readonly ?string $deletedBy = null,
         public readonly ?string $deletedAt = null,
-        private readonly bool   $isAdmin = false,
-        private readonly array  $timelineEvents = [], // Externe Timeline-Events
+        private readonly bool $isAdmin = false,
+        private readonly array $timelineEvents = [], // Externe Timeline-Events
 
-
-    )
-    {
+    ) {
         $this->sectionTitle = __('Metadaten');
         $this->sectionPartial = 'partials.plants.show.metadata';
         $this->variableName = 'metadata';
-
 
     }
 
@@ -44,10 +40,9 @@ class PlantMetadataViewModel
         ?string $updatedAt,
         ?string $deletedBy,
         ?string $deletedAt,
-        bool    $isAdmin = false,
-        array   $timelineEvents = []
-    ): self
-    {
+        bool $isAdmin = false,
+        array $timelineEvents = []
+    ): self {
         return new self(
             $requestedBy,
             $requestedAt,
@@ -64,7 +59,7 @@ class PlantMetadataViewModel
 
     /**
      * @return Collection<TimelineEvent>
-     * TODO extract to service or repository
+     *                                   TODO extract to service or repository
      */
     public function getTimelineEvents(): Collection
     {
@@ -85,7 +80,7 @@ class PlantMetadataViewModel
 
     public function getUpdated(): ?PlantMetadataItem
     {
-        if (!$this->hasUpdated()) {
+        if (! $this->hasUpdated()) {
             return null;
         }
 
@@ -100,7 +95,7 @@ class PlantMetadataViewModel
 
     public function getRequested(): ?PlantMetadataItem
     {
-        if (!$this->wasUserCreateRequest()) {
+        if (! $this->wasUserCreateRequest()) {
             return null;
         }
 
@@ -115,7 +110,7 @@ class PlantMetadataViewModel
 
     public function getDeleted(): ?PlantMetadataItem
     {
-        if (!$this->isDeleted()) {
+        if (! $this->isDeleted()) {
             return null;
         }
 
@@ -197,6 +192,7 @@ class PlantMetadataViewModel
     {
         return true; // Metadaten können eingeklappt werden
     }
+
     public function getDefaultExpanded(): bool
     {
         return false; // Standardmäßig nicht erweitert

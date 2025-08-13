@@ -9,9 +9,7 @@ readonly class PlantFiltersViewModel
         public ?string $type = null,
         public ?string $status = null,
         public ?string $category = null,
-    )
-    {
-    }
+    ) {}
 
     public static function from(array $filters): self
     {
@@ -25,19 +23,19 @@ readonly class PlantFiltersViewModel
 
     public function hasActiveFilters(): bool
     {
-        return !empty($this->search) ||
-            !empty($this->type) ||
-            !empty($this->status) ||
-            !empty($this->category);
+        return ! empty($this->search) ||
+            ! empty($this->type) ||
+            ! empty($this->status) ||
+            ! empty($this->category);
     }
 
     public function getActiveFiltersCount(): int
     {
-        return (int)collect([
+        return (int) collect([
             $this->search,
             $this->type,
             $this->status,
-            $this->category
+            $this->category,
         ])->filter()->count();
     }
 

@@ -13,7 +13,9 @@ class Plant extends Model
     use HasFactory;
 
     protected $primaryKey = 'uuid';
+
     protected $keyType = 'string';
+
     public $incrementing = false;
 
     protected $fillable = [
@@ -67,7 +69,7 @@ class Plant extends Model
     // Accessors
     public function getIsActiveAttribute(): bool
     {
-        return !$this->is_deleted;
+        return ! $this->is_deleted;
     }
 
     public function getTypeDisplayAttribute(): string

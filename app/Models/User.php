@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 
 /**
- * @property boolean $is_admin
+ * @property bool $is_admin
  */
 class User extends Authenticatable
 {

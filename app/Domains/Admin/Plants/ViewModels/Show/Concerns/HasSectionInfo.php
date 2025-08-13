@@ -4,10 +4,11 @@ namespace App\Domains\Admin\Plants\ViewModels\Show\Concerns;
 
 use Exception;
 
-trait  HasSectionInfo
+trait HasSectionInfo
 {
-    protected  ?string $sectionTitle = null;
-    protected  ?string $sectionPartial = null;
+    protected ?string $sectionTitle = null;
+
+    protected ?string $sectionPartial = null;
 
     protected string $variableName;
 
@@ -31,12 +32,13 @@ trait  HasSectionInfo
 
     /**
      * Override in child class if no $sectionPartial is set
+     *
      * @throws Exception
      */
     protected function getDefaultPartial(): string
     {
         // TODO Implement specific Exception or use a more specific message
-        throw new Exception('Either set $sectionPartial or override getDefaultPartial() in ' . static::class);
+        throw new Exception('Either set $sectionPartial or override getDefaultPartial() in '.static::class);
     }
 
     public function getVariableName(): string

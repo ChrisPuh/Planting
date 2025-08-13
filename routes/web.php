@@ -29,4 +29,4 @@ Route::middleware('auth')->group(function () {
     Volt::route('plants/edit/{uuid}', 'plant.edit')->name('plants.edit');
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
