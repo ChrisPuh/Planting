@@ -67,6 +67,7 @@ return new class extends Migration
                 ->on('plants')
                 ->onDelete('cascade');
 
+
             // Indexes
             $table->index('plant_uuid', 'idx_timeline_plant');
             $table->index('event_type', 'idx_timeline_event_type');

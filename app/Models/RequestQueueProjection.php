@@ -2,15 +2,11 @@
 
 namespace App\Models;
 
-use Database\Factories\RequestQueueProjectionFactory;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RequestQueueProjection extends Model
 {
-    /** @use HasFactory<RequestQueueProjectionFactory> */
-    use HasFactory;
-
     protected $table = 'request_queue_projections';
 
     protected $primaryKey = 'uuid';
@@ -41,6 +37,7 @@ class RequestQueueProjection extends Model
 
     /**
      * Get the plant that this request refers to (for update requests)
+     * Note: No foreign key constraint - validation happens at application level
      */
     public function plant(): BelongsTo
     {

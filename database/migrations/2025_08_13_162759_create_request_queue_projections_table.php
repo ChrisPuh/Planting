@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('request_queue_projections', function (Blueprint $table) {
@@ -38,8 +39,8 @@ return new class extends Migration {
             $table->index(['plant_uuid', 'status']);
             $table->index(['status', 'requested_at']);
 
-            // Foreign key constraint
-            $table->foreign('plant_uuid')->references('uuid')->on('plants')->onDelete('cascade');
+            // Note: No foreign key constraint in event sourcing - events may arrive out of order
+            // Validation happens at application level
         });
     }
 
