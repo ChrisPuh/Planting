@@ -32,7 +32,8 @@ class PlantAggregate extends AggregateRoot
         ?string $latinName = null,
         ?string $description = null,
         ?string $imageUrl = null,
-        bool $wasUserRequested = false
+        bool $wasUserRequested = false,
+        string $createdBy = 'System'
     ): self {
         // Business rule validation
         $this->validatePlantName($name);
@@ -58,7 +59,7 @@ class PlantAggregate extends AggregateRoot
             latinName: $latinName,
             description: $description,
             imageUrl: $imageUrl,
-            createdBy: auth()->user()->name ?? 'System',
+            createdBy: $createdBy,
             createdAt: now()->toISOString(),
             wasUserRequested: $wasUserRequested,
         ));
@@ -69,10 +70,9 @@ class PlantAggregate extends AggregateRoot
     /**
      * Update plant with validation and change tracking
      */
-    public function updatePlant(array $changes): self
+    public function updatePlant(array $changes, string $updatedBy = 'System'): self
     {
         // Domain validation - cannot update deleted plants
-        // TODO implement mor specific Exception for deleted plants
         if ($this->isDeleted) {
             throw new \DomainException('Cannot update deleted plant');
         }
@@ -118,7 +118,8 @@ class PlantAggregate extends AggregateRoot
         $this->recordThat(new PlantUpdated(
             plantId: $this->uuid(),
             changes: $filteredChanges,
-            updatedBy: auth()->user()->name ?? 'System',
+            updatedBy: $updatedBy, // FIXED: Now uses the parameter
+            //TODO now()->toISOString(), sollte als string übergeben werden
             updatedAt: now()->toISOString(),
         ));
 
@@ -128,7 +129,7 @@ class PlantAggregate extends AggregateRoot
     /**
      * Soft delete a plant
      */
-    public function deletePlant(?string $reason = null): self
+    public function deletePlant(?string $reason = null, string $deletedBy = 'System'): self
     {
         if ($this->isDeleted) {
             throw new \DomainException('Plant is already deleted');
@@ -136,7 +137,8 @@ class PlantAggregate extends AggregateRoot
 
         $this->recordThat(new PlantDeleted(
             plantId: $this->uuid(),
-            deletedBy: auth()->user()->name ?? 'System',
+            deletedBy: $deletedBy, // FIXED: Now uses the parameter
+            //TODO now()->toISOString(), sollte als string übergeben werden
             deletedAt: now()->toISOString(),
             reason: $reason,
         ));
@@ -147,7 +149,7 @@ class PlantAggregate extends AggregateRoot
     /**
      * Restore a deleted plant
      */
-    public function restorePlant(): self
+    public function restorePlant(string $restoredBy = 'System'): self
     {
         if (!$this->isDeleted) {
             throw new \DomainException('Plant is not deleted and cannot be restored');
@@ -155,7 +157,7 @@ class PlantAggregate extends AggregateRoot
 
         $this->recordThat(new PlantRestored(
             plantId: $this->uuid(),
-            restoredBy: auth()->user()->name ?? 'System',
+            restoredBy: $restoredBy, // FIXED: Now uses the parameter
             restoredAt: now()->toISOString(),
         ));
 
