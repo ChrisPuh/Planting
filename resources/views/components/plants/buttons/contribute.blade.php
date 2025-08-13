@@ -2,14 +2,14 @@
     'contribute'
 ])
 
-<flux:modal.trigger name="contribute-plant-{{$contribute['id']}}-{{$contribute['name']}}">
+<flux:modal.trigger name="contribute-plant-{{$contribute['uuid']}}-{{$contribute['name']}}">
     <div class="flex items-center space-x-2">
         <span>n/a</span>
         <flux:badge color="sky" class="cursor-pointer">{{__('help us out')}}</flux:button>
     </div>
 </flux:modal.trigger>
 
-<flux:modal name="contribute-plant-{{$contribute['id']}}-{{$contribute['name']}}" class="md:w-96">
+<flux:modal name="contribute-plant-{{$contribute['uuid']}}-{{$contribute['name']}}" class="md:w-96">
     <div class="space-y-6">
         <div>
             <flux:heading size="lg">Update {{$contribute['label']}}</flux:heading>

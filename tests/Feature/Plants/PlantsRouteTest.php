@@ -27,7 +27,8 @@ describe('Plants', function () {
         describe('plants.show()', function () {
             it('renders the plants show page', function () {
                 $user = \App\Models\User::factory()->create();
-                $response = $this->actingAs($user)->get(route('plants.show', ['id' => 1]));
+                $plant = \App\Models\Plant::factory()->create();
+                $response = $this->actingAs($user)->get(route('plants.show', ['uuid' => $plant->uuid]));
                 $response->assertStatus(200);
             });
         });
