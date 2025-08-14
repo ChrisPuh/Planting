@@ -1,11 +1,14 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/livewire-starter-kit",
+    "name": "chrispuh/plant-database-event-sourcing",
     "type": "project",
-    "description": "The official Laravel starter kit for Livewire.",
+    "description": "Event Sourcing Plant Database with Laravel, Livewire & Spatie Event Sourcing",
     "keywords": [
         "laravel",
-        "framework"
+        "event-sourcing",
+        "livewire",
+        "plant-database",
+        "domain-driven-design"
     ],
     "license": "MIT",
     "require": {
@@ -25,7 +28,9 @@
         "mockery/mockery": "^1.6.12",
         "nunomaduro/collision": "^8.8.2",
         "pestphp/pest": "^3.8.2",
-        "pestphp/pest-plugin-laravel": "^3.2"
+        "pestphp/pest-plugin-laravel": "^3.2",
+        "barryvdh/laravel-ide-helper": "^3.2",
+        "barryvdh/laravel-debugbar": "^3.16"
     },
     "autoload": {
         "psr-4": {
@@ -60,6 +65,7 @@
             "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite --kill-others"
         ],
         "test": [
+            "@php artisan config:clear --ansi",
             "pest"
         ],
         "test:unit": [
@@ -79,6 +85,79 @@
         ],
         "test:parallel": [
             "pest --parallel"
+        ],
+        "test:watch": [
+            "pest --watch"
+        ],
+        "test-coverage": [
+            "pest --coverage --min=80"
+        ],
+        "test-unit": [
+            "pest tests/Unit"
+        ],
+        "test-feature": [
+            "pest tests/Feature"
+        ],
+        "format": [
+            "./vendor/bin/pint"
+        ],
+        "format-test": [
+            "./vendor/bin/pint --test"
+        ],
+        "ide-helper": [
+            "@php artisan clear-compiled",
+            "@php artisan ide-helper:generate",
+            "@php artisan ide-helper:meta",
+            "@php artisan ide-helper:models --nowrite"
+        ],
+        "fresh": [
+            "@php artisan migrate:fresh --seed"
+        ],
+        "quality": [
+            "@ide-helper",
+            "@format",
+            "@test"
+        ],
+        "pre-commit": [
+            "echo '🔍 Running pre-commit checks...'",
+            "@format-test",
+            "@test",
+            "echo '✅ All checks passed! Ready for commit.'"
+        ],
+        "pre-push": [
+            "echo '🚀 Running pre-push checks...'",
+            "@format",
+            "@test-coverage",
+            "npm run build",
+            "echo '✅ All checks passed! Ready for push.'"
+        ],
+        "setup": [
+            "composer install",
+            "@php artisan key:generate",
+            "@php artisan migrate:fresh --seed",
+            "@ide-helper",
+            "echo '🎉 Project setup complete!'"
+        ],
+        "dev-tools": [
+            "@php artisan vendor:publish --provider='Barryvdh\\Debugbar\\ServiceProvider'",
+            "@php artisan vendor:publish --provider='Barryvdh\\LaravelIdeHelper\\IdeHelperServiceProvider'",
+            "echo '🛠️ Development tools configured!'"
+        ],
+        "optimize": [
+            "@php artisan config:cache",
+            "@php artisan route:cache",
+            "@php artisan view:cache",
+            "@php artisan event:cache",
+            "echo '⚡ Application optimized for production!'"
+        ],
+        "build": [
+            "npm run build",
+            "echo '📦 Assets built successfully!'"
+        ],
+        "deploy": [
+            "@build",
+            "@optimize",
+            "echo '🚀 Ready for deployment!'"
         ]
     },
     "extra": {
