@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('request_queue_projections', function (Blueprint $table) {
-            $table->string('uuid', 36)->primary()->comment('Request aggregate UUID');
+            $table->uuid()->primary()->comment('Request aggregate UUID');
 
             // Plant reference (nullable for new plant requests)
             $table->string('plant_uuid', 36)->nullable()->comment('Target plant UUID (null for new plants)');
@@ -22,7 +22,6 @@ return new class extends Migration
             // Request metadata
             $table->string('requested_by')->comment('Username who made the request');
             $table->timestamp('requested_at')->comment('When request was submitted');
-
             // Status and review
             $table->string('status')->default('pending')->comment('Status: pending, approved, rejected');
             $table->text('admin_comment')->nullable()->comment('Admin review comment');
