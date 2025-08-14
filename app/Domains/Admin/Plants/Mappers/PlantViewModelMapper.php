@@ -1,6 +1,6 @@
 <?php
 
-// App\Domains\Admin\Plants\Mappers\PlantViewModelMapper.php - Updated
+// App\Domains\Admin\Plants\Mappers\PlantViewModelMapper.php - Fixed
 
 namespace App\Domains\Admin\Plants\Mappers;
 
@@ -15,15 +15,15 @@ class PlantViewModelMapper
         $metadata = $this->extractMetadataFromTimeline($plantData, $timelineEvents);
 
         return new PlantViewModel(
-            uuid: $plantData['uuid'], // ← NEU: UUID hinzufügen
+            uuid: $plantData['uuid'],
             name: $plantData['name'],
             type: $this->mapTypeToDisplay($plantData['type']),
-            image_url: $plantData['image_url'],
+            image_url: $plantData['image_url'] ?? null,
 
             // Details
-            category: $plantData['category'],
-            latin_name: $plantData['latin_name'],
-            description: $plantData['description'],
+            category: $plantData['category'] ?? null,
+            latin_name: $plantData['latin_name'] ?? null,
+            description: $plantData['description'] ?? null,
 
             // Metadata aus Timeline extrahiert
             requested_by: $metadata['requested_by'],
@@ -100,7 +100,7 @@ class PlantViewModelMapper
         }
 
         // Fallback auf Plant-Daten falls Timeline leer
-        if (! $metadata['created_at'] && isset($plantData['created_at'])) {
+        if (!$metadata['created_at'] && isset($plantData['created_at'])) {
             $metadata['created_by'] = $plantData['created_by'];
             $metadata['created_at'] = $plantData['created_at'];
         }
