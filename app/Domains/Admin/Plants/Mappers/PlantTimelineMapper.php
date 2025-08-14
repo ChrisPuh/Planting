@@ -1,6 +1,6 @@
 <?php
 
-// App\Domains\Admin\Plants\Mappers\PlantTimelineMapper.php - Updated für echte Daten
+// App\Domains\Admin\Plants\Mappers\PlantTimelineMapper.php - Clean Architecture Refactor
 
 namespace App\Domains\Admin\Plants\Mappers;
 
@@ -11,18 +11,19 @@ class PlantTimelineMapper
 {
     /**
      * Mappt Timeline Events aus der DB zu TimelineEvent ValueObjects
+     *
+     * @param array $timelineEvents
+     * @param bool $isAdmin - Admin-Status als Parameter statt auth() Facade
      */
-    public function mapTimelineEventsFromDatabase(array $timelineEvents): array
+    public function mapTimelineEventsFromDatabase(array $timelineEvents, bool $isAdmin = false): array
     {
-        return array_map(function ($event) {
-            return $this->mapSingleEvent($event);
+        return array_map(function ($event) use ($isAdmin) {
+            return $this->mapSingleEvent($event, $isAdmin);
         }, $timelineEvents);
     }
 
-    private function mapSingleEvent(array $event): TimelineEvent
+    private function mapSingleEvent(array $event, bool $isAdmin): TimelineEvent
     {
-        $isAdmin = auth()->user()?->is_admin ?? false;
-
         return match ($event['event_type']) {
             'requested' => TimelineEvent::requested(
                 $event['performed_by'],
@@ -32,12 +33,12 @@ class PlantTimelineMapper
             'created' => TimelineEvent::created(
                 $event['performed_by'],
                 $this->formatDate($event['performed_at']),
-                true
+                true // Created events sind immer sichtbar
             ),
             'updated' => TimelineEvent::updated(
                 $event['performed_by'],
                 $this->formatDate($event['performed_at']),
-                true,
+                true, // Update events sind immer sichtbar
                 $this->extractChangedFields($event)
             ),
             'update_requested' => TimelineEvent::updateRequested(
@@ -85,10 +86,12 @@ class PlantTimelineMapper
 
     /**
      * Dummy-Events für Development/Testing (fallback)
+     *
+     * @param array $plantData
+     * @param bool $isAdmin - Admin-Status als Parameter
      */
-    public function createDummyTimelineEvents(array $plantData): array
+    public function createDummyTimelineEvents(array $plantData, bool $isAdmin = false): array
     {
-        $isAdmin = auth()->user()?->is_admin ?? false;
         $createdAt = Carbon::parse($plantData['created_at']);
 
         $dummyEvents = [
@@ -125,6 +128,6 @@ class PlantTimelineMapper
             'event_details' => ['changed_fields' => ['description']],
         ];
 
-        return $this->mapTimelineEventsFromDatabase($dummyEvents);
+        return $this->mapTimelineEventsFromDatabase($dummyEvents, $isAdmin);
     }
 }
