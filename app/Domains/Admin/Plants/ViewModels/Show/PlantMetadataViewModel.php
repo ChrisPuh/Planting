@@ -25,7 +25,7 @@ class PlantMetadataViewModel
         private readonly array $timelineEvents = [], // Externe Timeline-Events
 
     ) {
-        $this->sectionTitle = __('Metadaten');
+        $this->sectionTitle = 'Metadaten';
         $this->sectionPartial = 'partials.plants.show.metadata';
         $this->variableName = 'metadata';
 
@@ -43,6 +43,7 @@ class PlantMetadataViewModel
         bool $isAdmin = false,
         array $timelineEvents = []
     ): self {
+
         return new self(
             $requestedBy,
             $requestedAt,

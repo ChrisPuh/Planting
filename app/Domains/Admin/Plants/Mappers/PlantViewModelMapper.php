@@ -14,8 +14,11 @@ class PlantViewModelMapper
         // Extrahiere Timeline-Daten für Metadata
         $metadata = $this->extractMetadataFromTimeline($plantData, $timelineEvents);
 
+        // UUID validation - Eine Plant sollte immer eine UUID haben
+        $uuid = $plantData['uuid'] ?? throw new \InvalidArgumentException('Plant UUID is required for show view');
+
         return new PlantViewModel(
-            uuid: $plantData['uuid'],
+            uuid: $uuid,
             name: $plantData['name'],
             type: $this->mapTypeToDisplay($plantData['type']),
             image_url: $plantData['image_url'] ?? null,
@@ -67,6 +70,20 @@ class PlantViewModelMapper
             'deleted_at' => null,
         ];
 
+        // Sortiere Events chronologisch nach Zeitstempel
+        usort($timelineEvents, function ($a, $b) {
+            // Handle both TimelineEvent objects and arrays
+            if ($a instanceof \App\Domains\Admin\Plants\ValueObjects\TimelineEvent) {
+                $timeA = $a->at;
+                $timeB = $b->at;
+            } else {
+                $timeA = $a['at'] ?? $a['performed_at'] ?? '1970-01-01';
+                $timeB = $b['at'] ?? $b['performed_at'] ?? '1970-01-01';
+            }
+
+            return strcmp($timeA, $timeB);
+        });
+
         // Durchlaufe Timeline Events und extrahiere Metadata
         foreach ($timelineEvents as $event) {
             /** @var TimelineEvent $event */
@@ -100,7 +117,7 @@ class PlantViewModelMapper
         }
 
         // Fallback auf Plant-Daten falls Timeline leer
-        if (!$metadata['created_at'] && isset($plantData['created_at'])) {
+        if (! $metadata['created_at'] && isset($plantData['created_at'])) {
             $metadata['created_by'] = $plantData['created_by'];
             $metadata['created_at'] = $plantData['created_at'];
         }

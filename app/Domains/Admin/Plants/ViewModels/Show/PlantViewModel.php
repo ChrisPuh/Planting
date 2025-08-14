@@ -17,10 +17,11 @@ class PlantViewModel
     private readonly PlantBadgesViewModel $badges;
 
     public function __construct(
-        public ?string $uuid,    // ← NEU für echte Daten
+        public string $uuid,    // ← NEU für echte Daten
         public string $name,
         public string $type,
         public ?string $image_url = null,
+        public bool $isAdmin = false,
 
         // Details
         ?string $category = null,
@@ -43,7 +44,7 @@ class PlantViewModel
         $this->metadata = PlantMetadataViewModel::from(
             $requested_by, $requested_at, $created_by, $created_at,
             $updated_by, $updated_at, $deleted_by, $deleted_at,
-            auth()->user()?->is_admin ?? false,
+            $this->isAdmin,
             $timelineEvents
         );
 
