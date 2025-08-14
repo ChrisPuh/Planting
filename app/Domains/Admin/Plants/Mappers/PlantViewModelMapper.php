@@ -1,6 +1,6 @@
 <?php
 
-// App\Domains\Admin\Plants\Mappers\PlantViewModelMapper.php - Updated
+// App\Domains\Admin\Plants\Mappers\PlantViewModelMapper.php - Fixed
 
 namespace App\Domains\Admin\Plants\Mappers;
 
@@ -14,16 +14,19 @@ class PlantViewModelMapper
         // Extrahiere Timeline-Daten für Metadata
         $metadata = $this->extractMetadataFromTimeline($plantData, $timelineEvents);
 
+        // UUID validation - Eine Plant sollte immer eine UUID haben
+        $uuid = $plantData['uuid'] ?? throw new \InvalidArgumentException('Plant UUID is required for show view');
+
         return new PlantViewModel(
-            uuid: $plantData['uuid'], // ← NEU: UUID hinzufügen
+            uuid: $uuid,
             name: $plantData['name'],
             type: $this->mapTypeToDisplay($plantData['type']),
-            image_url: $plantData['image_url'],
+            image_url: $plantData['image_url'] ?? null,
 
             // Details
-            category: $plantData['category'],
-            latin_name: $plantData['latin_name'],
-            description: $plantData['description'],
+            category: $plantData['category'] ?? null,
+            latin_name: $plantData['latin_name'] ?? null,
+            description: $plantData['description'] ?? null,
 
             // Metadata aus Timeline extrahiert
             requested_by: $metadata['requested_by'],
@@ -66,6 +69,20 @@ class PlantViewModelMapper
             'deleted_by' => null,
             'deleted_at' => null,
         ];
+
+        // Sortiere Events chronologisch nach Zeitstempel
+        usort($timelineEvents, function ($a, $b) {
+            // Handle both TimelineEvent objects and arrays
+            if ($a instanceof \App\Domains\Admin\Plants\ValueObjects\TimelineEvent) {
+                $timeA = $a->at;
+                $timeB = $b->at;
+            } else {
+                $timeA = $a['at'] ?? $a['performed_at'] ?? '1970-01-01';
+                $timeB = $b['at'] ?? $b['performed_at'] ?? '1970-01-01';
+            }
+
+            return strcmp($timeA, $timeB);
+        });
 
         // Durchlaufe Timeline Events und extrahiere Metadata
         foreach ($timelineEvents as $event) {

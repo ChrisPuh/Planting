@@ -34,6 +34,7 @@ readonly class TimelineEvent
 
     public static function created(?string $by, ?string $at, bool $showBy): self
     {
+        // TODO es sollte auch das viewmodel updaten da da auch referenzen sind (updated etc)
         return new self(
             type: 'created',
             label: 'Erstellt',

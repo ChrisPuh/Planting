@@ -1,13 +1,13 @@
 @props([
-    'id',
+    'uuid',
     'name',
 ])
 
-<flux:modal.trigger name="restore-plant-{{$id}}">
+<flux:modal.trigger name="restore-plant-{{$uuid}}">
     <flux:button icon="arrow-path-rounded-square" variant="filled">{{__('restore')}}</flux:button>
 </flux:modal.trigger>
 
-<flux:modal name="restore-plant-{{$id}}" class="min-w-[22rem]">
+<flux:modal name="restore-plant-{{$uuid}}" class="min-w-[22rem]">
     <div class="space-y-6">
         <div>
             <flux:heading size="lg">{{__('Pflanze wiederherstellen?')}}</flux:heading>
