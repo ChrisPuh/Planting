@@ -34,11 +34,11 @@ describe('PlantViewModelMapper', function () {
             $result = $this->mapper->toShowViewModel($plantData, $timelineEvents);
 
             // Assert
-            expect($result)->toBeInstanceOf(PlantViewModel::class);
-            expect($result->uuid)->toBe('12345678-1234-1234-1234-123456789012');
-            expect($result->name)->toBe('Test Tomato');
-            expect($result->type)->toBe('Gemüse'); // Mapped from 'gemuese'
-            expect($result->image_url)->toBe('https://example.com/tomato.jpg');
+            expect($result)->toBeInstanceOf(PlantViewModel::class)
+                ->and($result->uuid)->toBe('12345678-1234-1234-1234-123456789012')
+                ->and($result->name)->toBe('Test Tomato')
+                ->and($result->type)->toBe('Gemüse') // Mapped from 'gemuese'
+                ->and($result->image_url)->toBe('https://example.com/tomato.jpg');
         });
 
         it('maps all plant types to display names correctly', function () {
@@ -94,12 +94,12 @@ describe('PlantViewModelMapper', function () {
             $metadata = $result->getMetadata();
 
             // Assert
-            expect($metadata->requestedBy)->toBe('Community User');
-            expect($metadata->requestedAt)->toBe('10.01.2025 09:00');
-            expect($metadata->createdBy)->toBe('Admin User');
-            expect($metadata->createdAt)->toBe('15.01.2025 10:30');
-            expect($metadata->updatedBy)->toBe('Editor User');
-            expect($metadata->updatedAt)->toBe('20.01.2025 14:15');
+            expect($metadata->requestedBy)->toBe('Community User')
+                ->and($metadata->requestedAt)->toBe('10.01.2025 09:00')
+                ->and($metadata->createdBy)->toBe('Admin User')
+                ->and($metadata->createdAt)->toBe('15.01.2025 10:30')
+                ->and($metadata->updatedBy)->toBe('Editor User')
+                ->and($metadata->updatedAt)->toBe('20.01.2025 14:15');
         });
 
         it('handles deleted and restored plants correctly', function () {
@@ -125,8 +125,8 @@ describe('PlantViewModelMapper', function () {
             $metadata = $result->getMetadata();
 
             // Assert - After restoration, delete info should be cleared
-            expect($metadata->deletedBy)->toBeNull();
-            expect($metadata->deletedAt)->toBeNull();
+            expect($metadata->deletedBy)->toBeNull()
+                ->and($metadata->deletedAt)->toBeNull();
         });
 
         it('falls back to plant data when timeline is empty', function () {
@@ -150,8 +150,8 @@ describe('PlantViewModelMapper', function () {
             $metadata = $result->getMetadata();
 
             // Assert
-            expect($metadata->createdBy)->toBe('Database User');
-            expect($metadata->createdAt)->toBe($this->testDate->toDateTimeString());
+            expect($metadata->createdBy)->toBe('Database User')
+                ->and($metadata->createdAt)->toBe($this->testDate->toDateTimeString());
         });
 
         it('handles null and missing values gracefully', function () {
@@ -172,10 +172,10 @@ describe('PlantViewModelMapper', function () {
             $result = $this->mapper->toShowViewModel($plantData, $timelineEvents);
 
             // Assert
-            expect($result->uuid)->toBe('12345678-1234-1234-1234-123456789012');
-            expect($result->name)->toBe('Minimal Plant');
-            expect($result->image_url)->toBeNull();
-            expect($result->getMetadata()->createdBy)->toBeNull();
+            expect($result->uuid)->toBe('12345678-1234-1234-1234-123456789012')
+                ->and($result->name)->toBe('Minimal Plant')
+                ->and($result->image_url)->toBeNull()
+                ->and($result->getMetadata()->createdBy)->toBeNull();
         });
 
         it('passes timeline events to the view model', function () {
@@ -200,9 +200,9 @@ describe('PlantViewModelMapper', function () {
 
             // Assert
             $metadataTimeline = $result->getMetadata()->getTimelineEvents();
-            expect($metadataTimeline)->toHaveCount(2);
-            expect($metadataTimeline->first()->type)->toBe('created');
-            expect($metadataTimeline->last()->type)->toBe('updated');
+            expect($metadataTimeline)->toHaveCount(2)
+                ->and($metadataTimeline->first()->type)->toBe('created')
+                ->and($metadataTimeline->last()->type)->toBe('updated');
         });
     });
 
@@ -244,8 +244,8 @@ describe('PlantViewModelMapper', function () {
 
             foreach ($types as $index => $type) {
                 $plantData = [
-                    'uuid' => "1234567{$index}-1234-1234-1234-123456789012",
-                    'name' => "Test {$type}",
+                    'uuid' => "1234567$index-1234-1234-1234-123456789012",
+                    'name' => "Test $type",
                     'type' => $type,
                     'category' => null,
                     'image_url' => null,
@@ -279,8 +279,8 @@ describe('PlantViewModelMapper', function () {
             $result = $this->mapper->toIndexViewModel($plantData);
 
             // Assert
-            expect($result['is_deleted'])->toBeTrue();
-            expect($result['name'])->toBe('Deleted Plant');
+            expect($result['is_deleted'])->toBeTrue()
+                ->and($result['name'])->toBe('Deleted Plant');
         });
 
         it('handles community requested plants in index view', function () {
@@ -300,8 +300,8 @@ describe('PlantViewModelMapper', function () {
             $result = $this->mapper->toIndexViewModel($plantData);
 
             // Assert
-            expect($result['was_community_requested'])->toBeTrue();
-            expect($result['type'])->toBe('Blumen');
+            expect($result['was_community_requested'])->toBeTrue()
+                ->and($result['type'])->toBe('Blumen');
         });
     });
 
@@ -332,10 +332,10 @@ describe('PlantViewModelMapper', function () {
             $metadata = $result->getMetadata();
 
             // Assert - Should use the LAST occurrence of each event type after chronological sorting
-            expect($metadata->requestedBy)->toBe('Community User');
-            expect($metadata->createdBy)->toBe('Admin User');
-            expect($metadata->updatedBy)->toBe('Editor 2'); // Last update chronologically
-            expect($metadata->updatedAt)->toBe('25.01.2025 16:00');
+            expect($metadata->requestedBy)->toBe('Community User')
+                ->and($metadata->createdBy)->toBe('Admin User')
+                ->and($metadata->updatedBy)->toBe('Editor 2') // Last update chronologically
+                ->and($metadata->updatedAt)->toBe('25.01.2025 16:00');
         });
 
         it('handles multiple updates correctly', function () {
@@ -362,8 +362,8 @@ describe('PlantViewModelMapper', function () {
             $metadata = $result->getMetadata();
 
             // Assert - Should use the most recent update
-            expect($metadata->updatedBy)->toBe('Editor 3');
-            expect($metadata->updatedAt)->toBe('18.01.2025 13:00');
+            expect($metadata->updatedBy)->toBe('Editor 3')
+                ->and($metadata->updatedAt)->toBe('18.01.2025 13:00');
         });
 
         it('handles delete and restore workflow', function () {
@@ -389,8 +389,8 @@ describe('PlantViewModelMapper', function () {
             $metadata = $result->getMetadata();
 
             // Assert - Delete info should be present
-            expect($metadata->deletedBy)->toBe('Admin User');
-            expect($metadata->deletedAt)->toBe('20.01.2025 14:15');
+            expect($metadata->deletedBy)->toBe('Admin User')
+                ->and($metadata->deletedAt)->toBe('20.01.2025 14:15');
         });
     });
 
@@ -411,9 +411,9 @@ describe('PlantViewModelMapper', function () {
             $result = $this->mapper->toShowViewModel($plantData, $timelineEvents);
 
             // Assert
-            expect($result->uuid)->toBe('12345678-1234-1234-1234-123456789012');
-            expect($result->name)->toBe('Minimal Plant');
-            expect($result->type)->toBe('Gemüse');
+            expect($result->uuid)->toBe('12345678-1234-1234-1234-123456789012')
+                ->and($result->name)->toBe('Minimal Plant')
+                ->and($result->type)->toBe('Gemüse');
         });
 
         it('handles malformed timeline events gracefully', function () {
@@ -470,16 +470,19 @@ describe('PlantViewModelMapper', function () {
             $result = $this->mapper->toShowViewModel($plantData, $timelineEvents);
 
             // Assert
-            expect($result->uuid)->toBe('12345678-1234-1234-1234-123456789012');
-            expect($result->name)->toBe('Complex Plant');
-            expect($result->type)->toBe('Gemüse');
+            expect($result->uuid)->toBe('12345678-1234-1234-1234-123456789012')
+                ->and($result->name)->toBe('Complex Plant')
+                ->and($result->type)->toBe('Gemüse');
 
             $metadata = $result->getMetadata();
-            expect($metadata->requestedBy)->toBe('Community User');
-            expect($metadata->createdBy)->toBe('Admin User');
-            expect($metadata->updatedBy)->toBe('Editor 2'); // Last update before delete
-            expect($metadata->deletedBy)->toBeNull(); // Cleared by restore
-            expect($metadata->deletedAt)->toBeNull(); // Cleared by restore
+            expect($metadata->requestedBy)->toBe('Community User')
+                ->and($metadata->createdBy)->toBe('Admin User')
+                ->and($metadata->updatedBy)->toBe('Editor 2')
+                ->and($metadata->deletedBy)->toBeNull()
+                ->and($metadata->deletedAt)->toBeNull();
+            // Last update before delete
+            // Cleared by restore
+            // Cleared by restore
         });
 
         it('throws exception for missing UUID', function () {
@@ -494,7 +497,7 @@ describe('PlantViewModelMapper', function () {
 
             // Act & Assert
             expect(fn () => $this->mapper->toShowViewModel($plantData, $timelineEvents))
-                ->toThrow(\InvalidArgumentException::class, 'Plant UUID is required for show view');
+                ->toThrow(InvalidArgumentException::class, 'Plant UUID is required for show view');
         });
 
         it('handles null values in complex mapping', function () {
@@ -515,12 +518,12 @@ describe('PlantViewModelMapper', function () {
             $result = $this->mapper->toShowViewModel($plantData, $timelineEvents);
 
             // Assert - Should handle gracefully
-            expect($result)->toBeInstanceOf(PlantViewModel::class);
-            expect($result->uuid)->toBe('12345678-1234-1234-1234-123456789012');
-            expect($result->name)->toBe('Minimal Plant');
-            expect($result->image_url)->toBeNull();
-            expect($result->getMetadata()->createdBy)->toBeNull();
-            expect($result->getDetails()->getCategory()->isMissing)->toBeTrue();
+            expect($result)->toBeInstanceOf(PlantViewModel::class)
+                ->and($result->uuid)->toBe('12345678-1234-1234-1234-123456789012')
+                ->and($result->name)->toBe('Minimal Plant')
+                ->and($result->image_url)->toBeNull()
+                ->and($result->getMetadata()->createdBy)->toBeNull()
+                ->and($result->getDetails()->getCategory()->isMissing)->toBeTrue();
         });
     });
 });
