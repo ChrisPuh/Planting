@@ -22,6 +22,8 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::redirect('plants', 'plants/dashboard');
 
+    // TODO sollten wir controller nutzen?
+    // TODO namen statt uuid anzeigen? brauchen wir da einen index oder kann man namen anzeigen und nach uuid filtern
     Volt::route('plants/dashboard', 'plant.dashboard')->name('plants.dashboard');
     Volt::route('plants/index', 'plant.index')->name('plants.index');
     Volt::route('plants/create', 'plant.create')->name('plants.create');
