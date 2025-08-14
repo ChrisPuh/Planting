@@ -1,6 +1,6 @@
 <?php
 
-// App\Domains\Admin\Plants\Services\PlantService.php - Updated
+// App\Domains\Admin\Plants\Services\PlantService.php - Clean Architecture Refactor
 
 namespace App\Domains\Admin\Plants\Services;
 
@@ -13,18 +13,25 @@ readonly class PlantService
 {
     public function __construct(
         private PlantRepositoryInterface $repository,
-        private PlantViewModelMapper $viewModelMapper,
-        private PlantTimelineMapper $timelineMapper,
-    ) {}
+        private PlantViewModelMapper     $viewModelMapper,
+        private PlantTimelineMapper      $timelineMapper,
+    )
+    {
+    }
 
-    public function getPlantForShow(string $plantUuid): PlantViewModel
+    /**
+     * @param string $plantUuid
+     * @param bool $isAdmin - Admin-Status als Parameter statt auth() Facade
+     */
+    public function getPlantForShow(string $plantUuid, bool $isAdmin = false): PlantViewModel
     {
         // 1. Plant + Timeline aus Repository holen
         $data = $this->repository->findWithTimeline($plantUuid);
 
         // 2. Timeline Events zu TimelineEvent ValueObjects mappen
         $timelineEvents = $this->timelineMapper->mapTimelineEventsFromDatabase(
-            $data['timeline_events']
+            $data['timeline_events'],
+            $isAdmin
         );
 
         // 3. Plant ViewModel erstellen
@@ -34,10 +41,10 @@ readonly class PlantService
         );
     }
 
-    public function getPlantForEdit(string $plantUuid): PlantViewModel
+    public function getPlantForEdit(string $plantUuid, bool $isAdmin = false): PlantViewModel
     {
         // Für Edit könnten andere Regeln gelten (z.B. keine Timeline)
-        return $this->getPlantForShow($plantUuid);
+        return $this->getPlantForShow($plantUuid, $isAdmin);
     }
 
     public function getPlantsForIndex(?array $filters = null): array
