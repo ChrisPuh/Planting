@@ -38,7 +38,7 @@ describe('PlantFiltersViewModel', function () {
 
         it('creates filters with default constructor values', function () {
             // Act
-            $filters = new PlantFiltersViewModel();
+            $filters = new PlantFiltersViewModel;
 
             // Assert
             expect($filters->search)->toBeNull()
@@ -69,7 +69,7 @@ describe('PlantFiltersViewModel', function () {
                 'search' => 'herb',
                 'type' => 'kraeuter',
                 'status' => 'published',
-                'category' => 'medicinal'
+                'category' => 'medicinal',
             ];
 
             // Act
@@ -97,7 +97,7 @@ describe('PlantFiltersViewModel', function () {
             // Arrange
             $filtersArray = [
                 'search' => 'mint',
-                'category' => 'herbs'
+                'category' => 'herbs',
             ];
 
             // Act
@@ -116,7 +116,7 @@ describe('PlantFiltersViewModel', function () {
                 'search' => 'flower',
                 'unknown_key' => 'unknown_value',
                 'another_unknown' => 123,
-                'type' => 'blumen'
+                'type' => 'blumen',
             ];
 
             // Act
@@ -135,7 +135,7 @@ describe('PlantFiltersViewModel', function () {
                 'search' => null,
                 'type' => 'strauch',
                 'status' => null,
-                'category' => 'garden'
+                'category' => 'garden',
             ];
 
             // Act
@@ -154,7 +154,7 @@ describe('PlantFiltersViewModel', function () {
                 'search' => '',
                 'type' => 'baum',
                 'status' => '',
-                'category' => ''
+                'category' => '',
             ];
 
             // Act
@@ -171,7 +171,7 @@ describe('PlantFiltersViewModel', function () {
     describe('hasActiveFilters method', function () {
         it('returns false when no filters are set', function () {
             // Arrange
-            $filters = new PlantFiltersViewModel();
+            $filters = new PlantFiltersViewModel;
 
             // Act & Assert
             expect($filters->hasActiveFilters())->toBeFalse();
@@ -264,7 +264,7 @@ describe('PlantFiltersViewModel', function () {
     describe('getActiveFiltersCount method', function () {
         it('returns 0 when no filters are set', function () {
             // Arrange
-            $filters = new PlantFiltersViewModel();
+            $filters = new PlantFiltersViewModel;
 
             // Act & Assert
             expect($filters->getActiveFiltersCount())->toBe(0);
@@ -370,7 +370,7 @@ describe('PlantFiltersViewModel', function () {
     describe('toArray method', function () {
         it('returns empty array when no filters are set', function () {
             // Arrange
-            $filters = new PlantFiltersViewModel();
+            $filters = new PlantFiltersViewModel;
 
             // Act
             $array = $filters->toArray();
@@ -394,7 +394,7 @@ describe('PlantFiltersViewModel', function () {
             // Assert
             expect($array)->toBe([
                 'search' => 'lavender',
-                'status' => 'active'
+                'status' => 'active',
             ]);
         });
 
@@ -413,7 +413,7 @@ describe('PlantFiltersViewModel', function () {
             // Assert
             expect($array)->toBe([
                 'type' => 'kraeuter',
-                'category' => 'medicinal'
+                'category' => 'medicinal',
             ]);
         });
 
@@ -434,7 +434,7 @@ describe('PlantFiltersViewModel', function () {
                 'search' => 'sunflower',
                 'type' => 'blumen',
                 'status' => 'published',
-                'category' => 'annual'
+                'category' => 'annual',
             ]);
         });
 
@@ -586,7 +586,7 @@ describe('PlantFiltersViewModel', function () {
             // Arrange
             $filters = PlantFiltersViewModel::from([
                 'search' => 'basilikum',
-                'type' => 'kraeuter'
+                'type' => 'kraeuter',
             ]);
 
             // Assert
@@ -594,7 +594,7 @@ describe('PlantFiltersViewModel', function () {
                 ->and($filters->getActiveFiltersCount())->toBe(2)
                 ->and($filters->toArray())->toBe([
                     'search' => 'basilikum',
-                    'type' => 'kraeuter'
+                    'type' => 'kraeuter',
                 ]);
         });
 
@@ -604,7 +604,7 @@ describe('PlantFiltersViewModel', function () {
                 'search' => 'rose',
                 'type' => 'blumen',
                 'status' => 'published',
-                'category' => 'garden'
+                'category' => 'garden',
             ]);
 
             // Assert
@@ -614,7 +614,7 @@ describe('PlantFiltersViewModel', function () {
                     'search' => 'rose',
                     'type' => 'blumen',
                     'status' => 'published',
-                    'category' => 'garden'
+                    'category' => 'garden',
                 ]);
         });
     });
