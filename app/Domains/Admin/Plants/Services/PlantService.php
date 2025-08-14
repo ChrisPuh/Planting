@@ -13,15 +13,12 @@ readonly class PlantService
 {
     public function __construct(
         private PlantRepositoryInterface $repository,
-        private PlantViewModelMapper     $viewModelMapper,
-        private PlantTimelineMapper      $timelineMapper,
-    )
-    {
-    }
+        private PlantViewModelMapper $viewModelMapper,
+        private PlantTimelineMapper $timelineMapper,
+    ) {}
 
     /**
-     * @param string $plantUuid
-     * @param bool $isAdmin - Admin-Status als Parameter statt auth() Facade
+     * @param  bool  $isAdmin  - Admin-Status als Parameter statt auth() Facade
      */
     public function getPlantForShow(string $plantUuid, bool $isAdmin = false): PlantViewModel
     {

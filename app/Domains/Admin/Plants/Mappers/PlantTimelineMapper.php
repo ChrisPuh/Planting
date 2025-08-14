@@ -12,8 +12,7 @@ class PlantTimelineMapper
     /**
      * Mappt Timeline Events aus der DB zu TimelineEvent ValueObjects
      *
-     * @param array $timelineEvents
-     * @param bool $isAdmin - Admin-Status als Parameter statt auth() Facade
+     * @param  bool  $isAdmin  - Admin-Status als Parameter statt auth() Facade
      */
     public function mapTimelineEventsFromDatabase(array $timelineEvents, bool $isAdmin = false): array
     {
@@ -24,37 +23,40 @@ class PlantTimelineMapper
 
     private function mapSingleEvent(array $event, bool $isAdmin): TimelineEvent
     {
+        $performedBy = $event['performed_by'] ?? 'Unknown';
+        $performedAt = $event['performed_at'] ?? null;
+
         return match ($event['event_type']) {
             'requested' => TimelineEvent::requested(
-                $event['performed_by'],
-                $this->formatDate($event['performed_at']),
+                $performedBy,
+                $this->formatDate($performedAt),
                 $isAdmin
             ),
             'created' => TimelineEvent::created(
-                $event['performed_by'],
-                $this->formatDate($event['performed_at']),
+                $performedBy,
+                $this->formatDate($performedAt),
                 true // Created events sind immer sichtbar
             ),
             'updated' => TimelineEvent::updated(
-                $event['performed_by'],
-                $this->formatDate($event['performed_at']),
+                $performedBy,
+                $this->formatDate($performedAt),
                 true, // Update events sind immer sichtbar
-                $this->extractChangedFields($event)
+                $this->extractChangedFields($event) // Pass details to TimelineEvent
             ),
             'update_requested' => TimelineEvent::updateRequested(
-                $event['performed_by'],
-                $this->formatDate($event['performed_at']),
+                $performedBy,
+                $this->formatDate($performedAt),
                 $isAdmin,
-                $this->extractRequestedFields($event)
+                $this->extractRequestedFields($event) // Pass details to TimelineEvent
             ),
             'deleted' => TimelineEvent::deleted(
-                $event['performed_by'],
-                $this->formatDate($event['performed_at']),
+                $performedBy,
+                $this->formatDate($performedAt),
                 $isAdmin
             ),
             'restored' => TimelineEvent::restored(
-                $event['performed_by'],
-                $this->formatDate($event['performed_at']),
+                $performedBy,
+                $this->formatDate($performedAt),
                 $isAdmin
             ),
             default => throw new \InvalidArgumentException("Unknown timeline event type: {$event['event_type']}")
@@ -77,6 +79,10 @@ class PlantTimelineMapper
 
     private function formatDate($date): string
     {
+        if (! $date) {
+            return ''; // Handle missing dates
+        }
+
         if ($date instanceof Carbon) {
             return $date->format('d.m.Y H:i');
         }
@@ -87,8 +93,7 @@ class PlantTimelineMapper
     /**
      * Dummy-Events für Development/Testing (fallback)
      *
-     * @param array $plantData
-     * @param bool $isAdmin - Admin-Status als Parameter
+     * @param  bool  $isAdmin  - Admin-Status als Parameter
      */
     public function createDummyTimelineEvents(array $plantData, bool $isAdmin = false): array
     {
